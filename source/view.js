@@ -35,8 +35,32 @@ view.View = class {
         this._modelFactoryService = new view.ModelFactoryService(this._host);
         this._modelFactoryService.import();
         this._worker = this._host.environment('measure') ? null : new view.Worker(this._host);
+    this.initLeafer();
     }
 
+  initLeafer() {
+    var leafer = new LeaferUI.Leafer({
+      view: window,
+      // fill: "#CDCDCD",
+    });
+    this.leafer = leafer;
+    window.leafer = leafer;
+    leafer.view.parentElement.style.zIndex = -1;
+
+    leafer.on(LeaferUI.LeaferEvent.READY, () => {
+      // 应用准备就绪
+    });
+
+    leafer.on(LeaferUI.LeaferEvent.VIEW_READY, () => {
+      // 视图准备就绪
+    });
+
+    console.log(leafer);
+    leafer.on(LeaferUI.MoveEvent.MOVE, (e) => {
+      // leafer.moveWorld(e.moveX, e.moveY);
+    //   console.log(leafer.FPS);
+    });
+  }
     async start() {
         try {
             await zip.Archive.import();
@@ -705,6 +729,10 @@ view.View = class {
         await this._timeout(2);
         try {
             const model = await this._modelFactoryService.open(context);
+      console.log(model);
+      const leafer = this.leafer;
+      leafer.view.parentElement.style.zIndex = 1;
+      leafer.clear();
             const format = [];
             if (model.format) {
                 format.push(model.format);
@@ -1852,6 +1880,8 @@ view.Graph = class extends grapher.Graph {
     }
 
     add(graph, signature) {
+    const that = this;
+    const leafer = this.view.leafer;
         this.identifier = this.model.identifier;
         this.identifier += graph && graph.name ? `.${graph.name.replace(/\/|\\/, '.')}` : '';
         const clusters = new Set();
@@ -1879,12 +1909,126 @@ view.Graph = class extends grapher.Graph {
                     for (const value of argument.value) {
                         this.createValue(value).from = viewInput;
                     }
+          console.log(viewInput);
+          const width = viewInput.width || 40;
+          const height = viewInput.height || 20;
+
+          const node_leafer = new LeaferUI.Box({
+            id: viewInput.id,
+            x: 100,
+            y: 100,
+            width: 0,
+            height: 0,
+            fill: "rgba(0,0,0,0.4)",
+            cornerRadius: 4,
+            // innerShadow: {
+            //   x: 0,
+            //   y: 0,
+            //   blur: 20,
+            //   color: "rgba(102,153,204,0.6)",
+            // },
+            // focusStyle: {
+            //   stroke: "rgba(102,153,204,0.4)",
+            // },
+            // selectedStyle: {
+            //   fill: "rgba(50,205,121, 1)",
+            // },
+            children: [
+              {
+                tag: "Text",
+                text: viewInput.value.name,
+                fill: "black",
+                padding: [0, 0],
+                textAlign: "center",
+                verticalAlign: "middle",
+              },
+            ],
+            draggable: true,
+            event: {
+              [LeaferUI.PointerEvent.ENTER]: (e) => {
+                // console.log(e);
+                e.current.fill = "rgba(102,153,204,0.8)";
+              },
+              [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                // console.log(e);
+                e.current.fill = "rgba(102,153,204,0.4)";
+              },
+              [LeaferUI.PointerEvent.DOWN]: (e) => {
+                // console.log(e);
+                // e.current.fill = "#FF9966";
+                e.current.select = true;
+                that.view.showModelProperties();
+                const viewNode = e.current.getAttr("view.data");
+                that.view.showNodeProperties(viewNode);
+              },
+            },
+          });
+
+          leafer.add(node_leafer);
+          node_leafer.setAttr("view.data", viewInput);
+          console.log(node_leafer.innerId);
                 }
             }
         }
         for (const node of graph.nodes) {
             const viewNode = this.createNode(node);
             this.setNode(viewNode);
+      console.log(viewNode);
+
+      const node_leafer = new LeaferUI.Box({
+        id: viewNode.id,
+        x: 100,
+        y: 100,
+        width: 0,
+        height: 0,
+        fill: "rgba(102,153,204,0.4)",
+        cornerRadius: 4,
+        // innerShadow: {
+        //   x: 0,
+        //   y: 0,
+        //   blur: 20,
+        //   color: "rgba(102,153,204,0.6)",
+        // },
+        // focusStyle: {
+        //   stroke: "rgba(102,153,204,0.4)",
+        // },
+        // selectedStyle: {
+        //   fill: "rgba(50,205,121, 1)",
+        // },
+        children: [
+          {
+            tag: "Text",
+            text: viewNode.content,
+            fill: "black",
+            padding: [0, 0],
+            textAlign: "center",
+            verticalAlign: "middle",
+          },
+        ],
+        draggable: true,
+        event: {
+          [LeaferUI.PointerEvent.ENTER]: (e) => {
+            // console.log(e);
+            e.current.fill = "rgba(102,153,204,0.8)";
+          },
+          [LeaferUI.PointerEvent.LEAVE]: (e) => {
+            // console.log(e);
+            e.current.fill = "rgba(102,153,204,0.4)";
+          },
+          [LeaferUI.PointerEvent.DOWN]: (e) => {
+            // console.log(e);
+            // e.current.fill = "#FF9966";
+            e.current.select = true;
+            that.view.showModelProperties();
+            const viewNode = e.current.getAttr("view.data");
+            that.view.showNodeProperties(viewNode);
+          },
+        },
+      });
+
+      leafer.add(node_leafer);
+      console.log(node_leafer.innerId);
+      node_leafer.setAttr("view.data", viewNode);
             let outputs = node.outputs;
             if (node.chain && node.chain.length > 0) {
                 const chainOutputs = node.chain[node.chain.length - 1].outputs;
@@ -1945,7 +2089,55 @@ view.Graph = class extends grapher.Graph {
             for (const argument of outputs) {
                 if (argument.visible !== false) {
                     const viewOutput = this.createOutput(argument);
+          viewOutput.id = viewOutput.name;
                     this.setNode(viewOutput);
+          console.log(viewOutput);
+
+          const width = viewOutput.width || 40;
+          const height = viewOutput.height || 20;
+
+          const node_leafer = new LeaferUI.Box({
+            id: viewOutput.id,
+            x: 100,
+            y: 100,
+            width: 0,
+            height: 0,
+            fill: "rgba(255,0,0,0.4)",
+            cornerRadius: 4,
+            children: [
+              {
+                tag: "Text",
+                text: viewOutput.value.name,
+                fill: "black",
+                padding: [0, 0],
+                textAlign: "center",
+                verticalAlign: "middle",
+              },
+            ],
+            draggable: true,
+            event: {
+              [LeaferUI.PointerEvent.ENTER]: (e) => {
+                // console.log(e);
+                e.current.fill = "rgba(102,153,204,0.8)";
+              },
+              [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                // console.log(e);
+                e.current.fill = "rgba(102,153,204,0.4)";
+              },
+              [LeaferUI.PointerEvent.DOWN]: (e) => {
+                // console.log(e);
+                // e.current.fill = "#FF9966";
+                e.current.select = true;
+                that.view.showModelProperties();
+                const viewNode = e.current.getAttr("view.data");
+                that.view.showNodeProperties(viewNode);
+              },
+            },
+          });
+
+          leafer.add(node_leafer);
+
+          node_leafer.setAttr("view.data", viewOutput);
                     for (const value of argument.value) {
                         this.createValue(value).to.push(viewOutput);
                     }
@@ -2076,6 +2268,7 @@ view.Node = class extends grapher.Node {
         if (content.length > 18) {
             content = `${content.substring(0, 9)}\u2026${content.substring(content.length - 9, content.length)}`;
         }
+        this.content = content;
         const styles = category ? ['node-item-type', `node-item-type-${category.toLowerCase()}`] : ['node-item-type'];
         const title = header.add(null, styles, content, tooltip);
         title.on('click', () => {
@@ -2320,8 +2513,10 @@ view.Value = class {
     build() {
         this._edges = this._edges || [];
         if (this.from && Array.isArray(this.to)) {
+      const from_node_leafer = leafer.findId(this.from.id);
             for (let i = 0; i < this.to.length; i++) {
                 const to = this.to[i];
+        const to_node_leafer = leafer.findId(to.id);
                 let content = '';
                 const type = this.value.type;
                 if (type &&
@@ -2348,6 +2543,23 @@ view.Value = class {
                 }
                 this.context.setEdge(edge);
                 this._edges.push(edge);
+        console.log(edge.id);
+        if (!leafer.findId(edge.id)) {
+          const link = new LeaferX.connector.LeaferXQnConnector(
+            from_node_leafer,
+            to_node_leafer
+          );
+          link.id = edge.id;
+          link.tag = "Link";
+          leafer.add(link);
+        } else {
+          const link = new LeaferX.connector.LeaferXQnConnector(
+            from_node_leafer,
+            to_node_leafer
+          );
+          link.tag = "Link";
+          leafer.add(link);
+        }
             }
         }
     }

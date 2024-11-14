@@ -16,5 +16,6 @@
     "eslint.experimental.useFlatConfig": true,
     "eslint.options": {
         "overrideConfigFile": "publish/eslint.config.js"
-    }
+    },
+    "liveServer.settings.port": 5502
 }
