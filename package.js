@@ -267,11 +267,17 @@ const build = async (target) => {
             writeLine('build web');
             await rm('dist', 'web');
             await mkdir('dist', 'web');
+            await mkdir('dist', 'web/libs');
             writeLine('cp source/dir dist/dir');
             const source_dir = dirname('source');
             const dist_dir = dirname('dist', 'web');
             const extensions = new Set(['html', 'css', 'js', 'json', 'ico', 'png']);
             await copy(source_dir, dist_dir, (file) => extensions.has(file.split('.').pop()));
+
+            const source_libs_dir = dirname('source/libs');
+            const dist_libs_dir = dirname('dist', 'web/libs');
+            await copy(source_libs_dir, dist_libs_dir, (file) => extensions.has(file.split('.').pop()));
+
             await rm('dist', 'web', 'app.js');
             await rm('dist', 'web', 'electron.js');
             const contentFile = dirname('dist', 'web', 'index.html');

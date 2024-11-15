@@ -975,6 +975,12 @@ view.View = class {
             }
             this._graph = viewGraph;
         }
+        setTimeout(() => {
+            this.leafer.zoom("fit", 1);
+            this.leafer.children.forEach(element => {
+                element.visible = true;
+            });
+          }, 30);
         return status;
     }
 
@@ -1910,16 +1916,14 @@ view.Graph = class extends grapher.Graph {
                         this.createValue(value).from = viewInput;
                     }
           console.log(viewInput);
-          const width = viewInput.width || 40;
-          const height = viewInput.height || 20;
-
           const node_leafer = new LeaferUI.Box({
             id: viewInput.id,
-            x: 100,
-            y: 100,
+            x: 0,
+            y: 0,
             width: 0,
             height: 0,
             fill: "rgba(0,0,0,0.4)",
+            visible:false,
             cornerRadius: 4,
             // innerShadow: {
             //   x: 0,
@@ -1951,7 +1955,7 @@ view.Graph = class extends grapher.Graph {
               },
               [LeaferUI.PointerEvent.LEAVE]: (e) => {
                 // console.log(e);
-                e.current.fill = "rgba(102,153,204,0.4)";
+                e.current.fill = "rgba(0,0,0,0.4)";
               },
               [LeaferUI.PointerEvent.DOWN]: (e) => {
                 // console.log(e);
@@ -1983,6 +1987,7 @@ view.Graph = class extends grapher.Graph {
         height: 0,
         fill: "rgba(102,153,204,0.4)",
         cornerRadius: 4,
+        visible:false,
         // innerShadow: {
         //   x: 0,
         //   y: 0,
@@ -2104,6 +2109,7 @@ view.Graph = class extends grapher.Graph {
             height: 0,
             fill: "rgba(255,0,0,0.4)",
             cornerRadius: 4,
+            visible:false,
             children: [
               {
                 tag: "Text",
@@ -2118,11 +2124,11 @@ view.Graph = class extends grapher.Graph {
             event: {
               [LeaferUI.PointerEvent.ENTER]: (e) => {
                 // console.log(e);
-                e.current.fill = "rgba(102,153,204,0.8)";
+                e.current.fill = "rgba(255,0,0,0.8)";
               },
               [LeaferUI.PointerEvent.LEAVE]: (e) => {
                 // console.log(e);
-                e.current.fill = "rgba(102,153,204,0.4)";
+                e.current.fill = "rgba(255,0,0,0.4)";
               },
               [LeaferUI.PointerEvent.DOWN]: (e) => {
                 // console.log(e);
@@ -2551,6 +2557,7 @@ view.Value = class {
           );
           link.id = edge.id;
           link.tag = "Link";
+          link.visible = false;
           leafer.add(link);
         } else {
           const link = new LeaferX.connector.LeaferXQnConnector(
@@ -2558,6 +2565,7 @@ view.Value = class {
             to_node_leafer
           );
           link.tag = "Link";
+          link.visible = false;
           leafer.add(link);
         }
             }
