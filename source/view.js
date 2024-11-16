@@ -1967,9 +1967,9 @@ view.Graph = class extends grapher.Graph {
             // focusStyle: {
             //   stroke: "rgba(102,153,204,0.4)",
             // },
-            hoverStyle: { fill: 'rgba(50,205,121,0.8)' },
+            hoverStyle: { fill: 'rgba(0,0,0,0.8)' },
             // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-            selectedStyle: {fill: "rgba(50,205,121, 1)"},
+            selectedStyle: {fill: "rgba(0,0,0, 1)"},
             cursor: 'pointer',
             children: [
               {
