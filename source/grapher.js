@@ -334,6 +334,7 @@ grapher.Graph = class {
         node_leafer.children[0].height = node.height;
         node_leafer.x = node.x - node.width / 2;
         node_leafer.y = node.y - node.height / 2;
+        node_leafer.select = true;
       }
     }
     for (const edge of this.edges.values()) {

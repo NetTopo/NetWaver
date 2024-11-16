@@ -39,6 +39,7 @@ view.View = class {
     }
 
   initLeafer() {
+    const view = this;
     var leafer = new LeaferUI.Leafer({
       view: window,
       // fill: "#CDCDCD",
@@ -60,6 +61,38 @@ view.View = class {
       // leafer.moveWorld(e.moveX, e.moveY);
     //   console.log(leafer.FPS);
     });
+
+    leafer.on(LeaferUI.MoveEvent.DOWN, (e) => {
+        // leafer.moveWorld(e.moveX, e.moveY);
+        console.log(e);
+        if(e.target instanceof LeaferUI.Leafer) {
+           if( view.currentSelectNode) {
+            view.currentSelectNode.selected = false;
+           }
+        }
+      });
+
+
+    // const rect = new LeaferUI.Rect({
+    //     x:100,
+    //     y:100,
+    //     width: 100,
+    //     height: 100,
+    //     fill: "rgba(50,205,121, 0.7)",
+    //     cornerRadius: 30,
+    //     selectedStyle: {
+    //       fill: "rgba(50,205,121, 1)",
+    //     },
+    //   });
+
+    //   leafer.add(rect);
+
+    //   setTimeout(() => {
+    //     rect.selected = true;
+    //     setTimeout(() => {
+    //       rect.selected = false;
+    //     }, 2000);
+    //   }, 1000);
   }
     async start() {
         try {
@@ -1934,9 +1967,10 @@ view.Graph = class extends grapher.Graph {
             // focusStyle: {
             //   stroke: "rgba(102,153,204,0.4)",
             // },
-            // selectedStyle: {
-            //   fill: "rgba(50,205,121, 1)",
-            // },
+            hoverStyle: { fill: 'rgba(50,205,121,0.8)' },
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            selectedStyle: {fill: "rgba(50,205,121, 1)"},
+            cursor: 'pointer',
             children: [
               {
                 tag: "Text",
@@ -1949,18 +1983,22 @@ view.Graph = class extends grapher.Graph {
             ],
             draggable: true,
             event: {
-              [LeaferUI.PointerEvent.ENTER]: (e) => {
-                // console.log(e);
-                e.current.fill = "rgba(102,153,204,0.8)";
-              },
-              [LeaferUI.PointerEvent.LEAVE]: (e) => {
-                // console.log(e);
-                e.current.fill = "rgba(0,0,0,0.4)";
-              },
+            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+            //     // console.log(e);
+            //     e.current.fill = "rgba(102,153,204,0.8)";
+            //   },
+            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+            //     // console.log(e);
+            //     e.current.fill = "rgba(0,0,0,0.4)";
+            //   },
               [LeaferUI.PointerEvent.DOWN]: (e) => {
                 // console.log(e);
                 // e.current.fill = "#FF9966";
-                e.current.select = true;
+                if(that.view.currentSelectNode) {
+                    that.view.currentSelectNode.selected = false;
+                }
+                e.current.selected = true;
+                that.view.currentSelectNode = e.current;
                 that.view.showModelProperties();
                 const viewNode = e.current.getAttr("view.data");
                 that.view.showNodeProperties(viewNode);
@@ -1988,6 +2026,11 @@ view.Graph = class extends grapher.Graph {
         fill: "rgba(102,153,204,0.4)",
         cornerRadius: 4,
         visible:false,
+        select:false,
+        hoverStyle: { fill: 'rgba(102,153,204,0.8)' },
+        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+        selectedStyle: {fill: "rgba(102,153,204,1.0)"},
+        cursor: 'pointer',
         // innerShadow: {
         //   x: 0,
         //   y: 0,
@@ -1996,9 +2039,6 @@ view.Graph = class extends grapher.Graph {
         // },
         // focusStyle: {
         //   stroke: "rgba(102,153,204,0.4)",
-        // },
-        // selectedStyle: {
-        //   fill: "rgba(50,205,121, 1)",
         // },
         children: [
           {
@@ -2012,18 +2052,23 @@ view.Graph = class extends grapher.Graph {
         ],
         draggable: true,
         event: {
-          [LeaferUI.PointerEvent.ENTER]: (e) => {
-            // console.log(e);
-            e.current.fill = "rgba(102,153,204,0.8)";
-          },
-          [LeaferUI.PointerEvent.LEAVE]: (e) => {
-            // console.log(e);
-            e.current.fill = "rgba(102,153,204,0.4)";
-          },
+        //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+        //     // console.log(e);
+        //     e.current.fill = "rgba(102,153,204,0.8)";
+        //   },
+        //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+        //     // console.log(e);
+        //     e.current.fill = "rgba(102,153,204,0.4)";
+        //   },
           [LeaferUI.PointerEvent.DOWN]: (e) => {
             // console.log(e);
-            // e.current.fill = "#FF9966";
-            e.current.select = true;
+            
+            if(that.view.currentSelectNode) {
+                that.view.currentSelectNode.selected = false;
+            }
+
+            e.current.selected = true;
+            that.view.currentSelectNode = e.current;
             that.view.showModelProperties();
             const viewNode = e.current.getAttr("view.data");
             that.view.showNodeProperties(viewNode);
@@ -2121,19 +2166,27 @@ view.Graph = class extends grapher.Graph {
               },
             ],
             draggable: true,
+            hoverStyle: { fill: 'rgba(255,0,0,0.8)' },
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            selectedStyle: {fill: "rgba(255, 0, 0, 1)"},
+            cursor: 'pointer',
             event: {
-              [LeaferUI.PointerEvent.ENTER]: (e) => {
-                // console.log(e);
-                e.current.fill = "rgba(255,0,0,0.8)";
-              },
-              [LeaferUI.PointerEvent.LEAVE]: (e) => {
-                // console.log(e);
-                e.current.fill = "rgba(255,0,0,0.4)";
-              },
+            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+            //     // console.log(e);
+            //     e.current.fill = "rgba(255,0,0,0.8)";
+            //   },
+            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+            //     // console.log(e);
+            //     e.current.fill = "rgba(255,0,0,0.4)";
+            //   },
               [LeaferUI.PointerEvent.DOWN]: (e) => {
                 // console.log(e);
-                // e.current.fill = "#FF9966";
-                e.current.select = true;
+                if(that.view.currentSelectNode) {
+                    that.view.currentSelectNode.selected = false;
+                }
+                e.current.selected = true;
+                that.view.currentSelectNode = e.current;
+
                 that.view.showModelProperties();
                 const viewNode = e.current.getAttr("view.data");
                 that.view.showNodeProperties(viewNode);
