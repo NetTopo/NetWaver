@@ -10,7 +10,7 @@ import * as tar from './tar.js';
 import * as text from './text.js';
 import * as xml from './xml.js';
 import * as zip from './zip.js';
-import {colorMap} from './color.js';
+import {colorMap,colorMapDark} from './color.js';
 
 const view = {};
 const markdown = {};
@@ -1980,7 +1980,7 @@ view.Graph = class extends grapher.Graph {
                             {
                                 tag: "Text",
                                 text: viewInput.value.name,
-                                fill: "white",
+                                fill: mediaQuery.matches? "white" :"black",
                                 padding: [0, 0],
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -2032,7 +2032,7 @@ view.Graph = class extends grapher.Graph {
 
             const category = node.type && node.type.category ? node.type.category : '';
             console.log(category);
-            const color = colorMap[category.toLowerCase()] || [255,0,0];
+            const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
             
             const node_leafer = new LeaferUI.Box({
                 id: viewNode.id,
@@ -2041,7 +2041,7 @@ view.Graph = class extends grapher.Graph {
                 width: 0,
                 height: 0,
                 // fill: "rgba(102,153,204,0.4)",
-                fill:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`,
+                fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
                 cornerRadius: 4,
                 visible:false,
                 stroke:"#000000",
@@ -2187,7 +2187,7 @@ view.Graph = class extends grapher.Graph {
                             {
                                 tag: "Text",
                                 text: viewOutput.value.name,
-                                fill: "white" ,
+                                fill: mediaQuery.matches? "white" :"black",
                                 padding: [0, 0],
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -2645,6 +2645,8 @@ view.Value = class {
                     );
                     link.id = edge.id;
                     link.tag = "Link";
+                    link.strokeWidth = 1;
+                    link.stroke = '#000000';
                     link.visible = false;
                     leafer.add(link);
                 } else {
@@ -2653,6 +2655,8 @@ view.Value = class {
                         to_node_leafer
                     );
                     link.tag = "Link";
+                    link.strokeWidth = 1;
+                    link.stroke = '#000000';
                     link.visible = false;
                     leafer.add(link);
                 }
