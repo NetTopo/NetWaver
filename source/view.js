@@ -69,12 +69,7 @@ view.View = class {
             if (e.target instanceof LeaferUI.Leafer) {
                 if ( view.currentSelectNode) {
                     view.currentSelectNode.selected = false;
-                    view.currentSelectNode.shadow  =  {
-                        x: 0,
-                        y: 0,
-                        blur: 0,
-                        color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
-                    };
+                    view.currentSelectNode.shadow  = false;
                 }
             }
         });
