@@ -10,6 +10,7 @@ import * as tar from './tar.js';
 import * as text from './text.js';
 import * as xml from './xml.js';
 import * as zip from './zip.js';
+import {colorMap} from './color.js';
 
 const view = {};
 const markdown = {};
@@ -35,57 +36,63 @@ view.View = class {
         this._modelFactoryService = new view.ModelFactoryService(this._host);
         this._modelFactoryService.import();
         this._worker = this._host.environment('measure') ? null : new view.Worker(this._host);
-    this.initLeafer();
+        this.initLeafer();
     }
 
-  initLeafer() {
-    const view = this;
-    var leafer = new LeaferUI.Leafer({
-      view: window,
-      // fill: "#CDCDCD",
-    });
-    this.leafer = leafer;
-    window.leafer = leafer;
-    leafer.view.parentElement.style.zIndex = -1;
+    initLeafer() {
+        const view = this;
+        var leafer = new LeaferUI.Leafer({
+            view: window,
+            // fill: "#CDCDCD",
+        });
+        this.leafer = leafer;
+        window.leafer = leafer;
+        leafer.view.parentElement.style.zIndex = -1;
 
-    leafer.on(LeaferUI.LeaferEvent.READY, () => {
-      // 应用准备就绪
-    });
+        leafer.on(LeaferUI.LeaferEvent.READY, () => {
+            // 应用准备就绪
+        });
 
-    leafer.on(LeaferUI.LeaferEvent.VIEW_READY, () => {
-      // 视图准备就绪
-    });
+        leafer.on(LeaferUI.LeaferEvent.VIEW_READY, () => {
+            // 视图准备就绪
+        });
 
-    console.log(leafer);
-    leafer.on(LeaferUI.MoveEvent.MOVE, (e) => {
-      // leafer.moveWorld(e.moveX, e.moveY);
-    //   console.log(leafer.FPS);
-    });
+        console.log(leafer);
+        leafer.on(LeaferUI.MoveEvent.MOVE, (e) => {
+            // leafer.moveWorld(e.moveX, e.moveY);
+            //   console.log(leafer.FPS);
+        });
 
-    leafer.on(LeaferUI.MoveEvent.DOWN, (e) => {
+        leafer.on(LeaferUI.MoveEvent.DOWN, (e) => {
         // leafer.moveWorld(e.moveX, e.moveY);
-        console.log(e);
-        if(e.target instanceof LeaferUI.Leafer) {
-           if( view.currentSelectNode) {
-            view.currentSelectNode.selected = false;
-           }
-        }
-      });
+            console.log(e);
+            if (e.target instanceof LeaferUI.Leafer) {
+                if ( view.currentSelectNode) {
+                    view.currentSelectNode.selected = false;
+                    view.currentSelectNode.shadow  =  {
+                        x: 0,
+                        y: 0,
+                        blur: 0,
+                        color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
+                    };
+                }
+            }
+        });
 
 
-    // const rect = new LeaferUI.Rect({
-    //     x:100,
-    //     y:100,
-    //     width: 100,
-    //     height: 100,
-    //     fill: "rgba(50,205,121, 0.7)",
-    //     cornerRadius: 30,
-    //     selectedStyle: {
-    //       fill: "rgba(50,205,121, 1)",
-    //     },
-    //   });
+        // const rect = new LeaferUI.Rect({
+        //     x:100,
+        //     y:100,
+        //     width: 100,
+        //     height: 100,
+        //     fill: "rgba(50,205,121, 0.7)",
+        //     cornerRadius: 30,
+        //     selectedStyle: {
+        //       fill: "rgba(50,205,121, 1)",
+        //     },
+        //   });
 
-    //   leafer.add(rect);
+        //   leafer.add(rect);
 
     //   setTimeout(() => {
     //     rect.selected = true;
@@ -93,7 +100,7 @@ view.View = class {
     //       rect.selected = false;
     //     }, 2000);
     //   }, 1000);
-  }
+    }
     async start() {
         try {
             await zip.Archive.import();
@@ -762,10 +769,10 @@ view.View = class {
         await this._timeout(2);
         try {
             const model = await this._modelFactoryService.open(context);
-      console.log(model);
-      const leafer = this.leafer;
-      leafer.view.parentElement.style.zIndex = 1;
-      leafer.clear();
+            console.log(model);
+            const leafer = this.leafer;
+            leafer.view.parentElement.style.zIndex = 1;
+            leafer.clear();
             const format = [];
             if (model.format) {
                 format.push(model.format);
@@ -1013,7 +1020,7 @@ view.View = class {
             this.leafer.children.forEach(element => {
                 element.visible = true;
             });
-          }, 30);
+        }, 30);
         return status;
     }
 
@@ -1919,8 +1926,8 @@ view.Graph = class extends grapher.Graph {
     }
 
     add(graph, signature) {
-    const that = this;
-    const leafer = this.view.leafer;
+        const that = this;
+        const leafer = this.view.leafer;
         this.identifier = this.model.identifier;
         this.identifier += graph && graph.name ? `.${graph.name.replace(/\/|\\/, '.')}` : '';
         const clusters = new Set();
@@ -1940,6 +1947,8 @@ view.Graph = class extends grapher.Graph {
         }
         const inputs = signature ? signature.inputs : graph.inputs;
         const outputs = signature ? signature.outputs : graph.outputs;
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         if (Array.isArray(inputs)) {
             for (const argument of inputs) {
                 if (argument.visible !== false) {
@@ -1948,137 +1957,159 @@ view.Graph = class extends grapher.Graph {
                     for (const value of argument.value) {
                         this.createValue(value).from = viewInput;
                     }
-          console.log(viewInput);
-          const node_leafer = new LeaferUI.Box({
-            id: viewInput.id,
-            x: 0,
-            y: 0,
-            width: 0,
-            height: 0,
-            fill: "rgba(0,0,0,0.4)",
-            visible:false,
-            cornerRadius: 4,
-            // innerShadow: {
-            //   x: 0,
-            //   y: 0,
-            //   blur: 20,
-            //   color: "rgba(102,153,204,0.6)",
-            // },
-            // focusStyle: {
-            //   stroke: "rgba(102,153,204,0.4)",
-            // },
-            hoverStyle: { fill: 'rgba(0,0,0,0.8)' },
-            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-            selectedStyle: {fill: "rgba(0,0,0, 1)"},
-            cursor: 'pointer',
-            children: [
-              {
-                tag: "Text",
-                text: viewInput.value.name,
-                fill: "black",
-                padding: [0, 0],
-                textAlign: "center",
-                verticalAlign: "middle",
-              },
-            ],
-            draggable: true,
-            event: {
-            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-            //     // console.log(e);
-            //     e.current.fill = "rgba(102,153,204,0.8)";
-            //   },
-            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-            //     // console.log(e);
-            //     e.current.fill = "rgba(0,0,0,0.4)";
-            //   },
-              [LeaferUI.PointerEvent.DOWN]: (e) => {
-                // console.log(e);
-                // e.current.fill = "#FF9966";
-                if(that.view.currentSelectNode) {
-                    that.view.currentSelectNode.selected = false;
-                }
-                e.current.selected = true;
-                that.view.currentSelectNode = e.current;
-                that.view.showModelProperties();
-                const viewNode = e.current.getAttr("view.data");
-                that.view.showNodeProperties(viewNode);
-              },
-            },
-          });
+                    const node_leafer = new LeaferUI.Box({
+                        id: viewInput.id,
+                        x: 0,
+                        y: 0,
+                        width: 0,
+                        height: 0,
+                        fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
+                        visible:false,
+                        cornerRadius: 4,
+                        stroke:"#000000",
+                        strokeWidth:1,
+                        // innerShadow: {
+                        //   x: 0,
+                        //   y: 0,
+                        //   blur: 20,
+                        //   color: "rgba(102,153,204,0.6)",
+                        // },
+                        // focusStyle: {
+                        //   stroke: "rgba(102,153,204,0.4)",
+                        // },
+                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+                        // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
+                        // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
+                        cursor: 'pointer',
+                        children: [
+                            {
+                                tag: "Text",
+                                text: viewInput.value.name,
+                                fill: "white",
+                                padding: [0, 0],
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                fontSize: 10,
+                            },
+                        ],
+                        draggable: true,
+                        event: {
+                            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                            //     // console.log(e);
+                            //     e.current.fill = "rgba(102,153,204,0.8)";
+                            //   },
+                            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                            //     // console.log(e);
+                            //     e.current.fill = "rgba(0,0,0,0.4)";
+                            //   },
+                            [LeaferUI.PointerEvent.DOWN]: (e) => {
+                                // console.log(e);
+                                // e.current.fill = "#FF9966";
+                                if (that.view.currentSelectNode) {
+                                    that.view.currentSelectNode.selected = false;
+                                    that.view.currentSelectNode.shadow  = false;
+                                }
+                                e.current.selected = true;
+                                e.current.shadow  =  {
+                                    x: 6,
+                                    y: 6,
+                                    blur: 6,
+                                    color: mediaQuery.matches? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
+                                };
+                                that.view.currentSelectNode = e.current;
+                                that.view.showModelProperties();
+                                const viewNode = e.current.getAttr("view.data");
+                                that.view.showNodeProperties(viewNode);
+                            },
+                        },
+                    });
+                    leafer.add(node_leafer);
+                    node_leafer.setAttr("view.data", viewInput);
 
-          leafer.add(node_leafer);
-          node_leafer.setAttr("view.data", viewInput);
-          console.log(node_leafer.innerId);
                 }
             }
         }
         for (const node of graph.nodes) {
             const viewNode = this.createNode(node);
             this.setNode(viewNode);
-      console.log(viewNode);
 
-      const node_leafer = new LeaferUI.Box({
-        id: viewNode.id,
-        x: 100,
-        y: 100,
-        width: 0,
-        height: 0,
-        fill: "rgba(102,153,204,0.4)",
-        cornerRadius: 4,
-        visible:false,
-        select:false,
-        hoverStyle: { fill: 'rgba(102,153,204,0.8)' },
-        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-        selectedStyle: {fill: "rgba(102,153,204,1.0)"},
-        cursor: 'pointer',
-        // innerShadow: {
-        //   x: 0,
-        //   y: 0,
-        //   blur: 20,
-        //   color: "rgba(102,153,204,0.6)",
-        // },
-        // focusStyle: {
-        //   stroke: "rgba(102,153,204,0.4)",
-        // },
-        children: [
-          {
-            tag: "Text",
-            text: viewNode.content,
-            fill: "black",
-            padding: [0, 0],
-            textAlign: "center",
-            verticalAlign: "middle",
-          },
-        ],
-        draggable: true,
-        event: {
-        //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-        //     // console.log(e);
-        //     e.current.fill = "rgba(102,153,204,0.8)";
-        //   },
-        //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-        //     // console.log(e);
-        //     e.current.fill = "rgba(102,153,204,0.4)";
-        //   },
-          [LeaferUI.PointerEvent.DOWN]: (e) => {
-            // console.log(e);
+            console.log(viewNode);
+
+            const category = node.type && node.type.category ? node.type.category : '';
+            console.log(category);
+            const color = colorMap[category.toLowerCase()] || [255,0,0];
             
-            if(that.view.currentSelectNode) {
-                that.view.currentSelectNode.selected = false;
-            }
+            const node_leafer = new LeaferUI.Box({
+                id: viewNode.id,
+                x: 100,
+                y: 100,
+                width: 0,
+                height: 0,
+                // fill: "rgba(102,153,204,0.4)",
+                fill:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`,
+                cornerRadius: 4,
+                visible:false,
+                stroke:"#000000",
+                strokeWidth:1,
+                // hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
+                // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+                // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+                cursor: 'pointer',
+                // innerShadow: {
+                //   x: 0,
+                //   y: 0,
+                //   blur: 20,
+                //   color: "rgba(102,153,204,0.6)",
+                // },
+                // focusStyle: {
+                //   stroke: "rgba(102,153,204,0.4)",
+                // },
+                children: [
+                    {
+                        tag: "Text",
+                        text: viewNode.content,
+                        // fill:mediaQuery.matches ? "white" : "black",
+                        fill:"white",
+                        padding: [0, 0],
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        fontSize: 10,
+                    },
+                ],
+                draggable: true,
+                event: {
+                    //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                    //     // console.log(e);
+                    //     e.current.fill = "rgba(102,153,204,0.8)";
+                    //   },
+                    //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                    //     // console.log(e);
+                    //     e.current.fill = "rgba(102,153,204,0.4)";
+                    //   },
+                    [LeaferUI.PointerEvent.DOWN]: (e) => {
+                        // console.log(e);
+                        if (that.view.currentSelectNode) {
+                            that.view.currentSelectNode.selected = false;
+                            that.view.currentSelectNode.shadow  = false;
+                        }
 
-            e.current.selected = true;
-            that.view.currentSelectNode = e.current;
-            that.view.showModelProperties();
-            const viewNode = e.current.getAttr("view.data");
-            that.view.showNodeProperties(viewNode);
-          },
-        },
-      });
+                        e.current.selected = true;
+                        e.current.shadow  =  {
+                            x: 6,
+                            y: 6,
+                            blur: 6,
+                            color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
+                        };
+                        that.view.currentSelectNode = e.current;
+                        that.view.showModelProperties();
+                        const viewNode = e.current.getAttr("view.data");
+                        that.view.showNodeProperties(viewNode);
+                    },
+                },
+            });
 
-      leafer.add(node_leafer);
-      console.log(node_leafer.innerId);
-      node_leafer.setAttr("view.data", viewNode);
+            leafer.add(node_leafer);
+            node_leafer.setAttr("view.data", viewNode);
             let outputs = node.outputs;
             if (node.chain && node.chain.length > 0) {
                 const chainOutputs = node.chain[node.chain.length - 1].outputs;
@@ -2139,64 +2170,74 @@ view.Graph = class extends grapher.Graph {
             for (const argument of outputs) {
                 if (argument.visible !== false) {
                     const viewOutput = this.createOutput(argument);
-          viewOutput.id = viewOutput.name;
+                    viewOutput.id = viewOutput.name;
                     this.setNode(viewOutput);
-          console.log(viewOutput);
+                    console.log(viewOutput);
 
-          const width = viewOutput.width || 40;
-          const height = viewOutput.height || 20;
+                    const width = viewOutput.width || 40;
+                    const height = viewOutput.height || 20;
 
-          const node_leafer = new LeaferUI.Box({
-            id: viewOutput.id,
-            x: 100,
-            y: 100,
-            width: 0,
-            height: 0,
-            fill: "rgba(255,0,0,0.4)",
-            cornerRadius: 4,
-            visible:false,
-            children: [
-              {
-                tag: "Text",
-                text: viewOutput.value.name,
-                fill: "black",
-                padding: [0, 0],
-                textAlign: "center",
-                verticalAlign: "middle",
-              },
-            ],
-            draggable: true,
-            hoverStyle: { fill: 'rgba(255,0,0,0.8)' },
-            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-            selectedStyle: {fill: "rgba(255, 0, 0, 1)"},
-            cursor: 'pointer',
-            event: {
-            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-            //     // console.log(e);
-            //     e.current.fill = "rgba(255,0,0,0.8)";
-            //   },
-            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-            //     // console.log(e);
-            //     e.current.fill = "rgba(255,0,0,0.4)";
-            //   },
-              [LeaferUI.PointerEvent.DOWN]: (e) => {
-                // console.log(e);
-                if(that.view.currentSelectNode) {
-                    that.view.currentSelectNode.selected = false;
-                }
-                e.current.selected = true;
-                that.view.currentSelectNode = e.current;
+                    const node_leafer = new LeaferUI.Box({
+                        id: viewOutput.id,
+                        x: 100,
+                        y: 100,
+                        width: 0,
+                        height: 0,
+                        fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
+                        cornerRadius: 4,
+                        visible:false,
+                        stroke:"#000000",
+                        strokeWidth:1,
+                        children: [
+                            {
+                                tag: "Text",
+                                text: viewOutput.value.name,
+                                fill: "white" ,
+                                padding: [0, 0],
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                fontSize: 10,
+                            },
+                        ],
+                        draggable: true,
+                        // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
+                        // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
+                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+                        cursor: 'pointer',
+                        event: {
+                            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                            //     // console.log(e);
+                            //     e.current.fill = "rgba(255,0,0,0.8)";
+                            //   },
+                            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                            //     // console.log(e);
+                            //     e.current.fill = "rgba(255,0,0,0.4)";
+                            //   },
+                            [LeaferUI.PointerEvent.DOWN]: (e) => {
+                                // console.log(e);
+                                if (that.view.currentSelectNode) {
+                                    that.view.currentSelectNode.selected = false;
+                                    that.view.currentSelectNode.shadow  = false;
+                                }
+                                e.current.selected = true;
+                                that.view.currentSelectNode = e.current;
+                                e.current.shadow  =  {
+                                    x: 6,
+                                    y: 6,
+                                    blur: 6,
+                                    color: mediaQuery.matches ? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
+                                };
 
-                that.view.showModelProperties();
-                const viewNode = e.current.getAttr("view.data");
-                that.view.showNodeProperties(viewNode);
-              },
-            },
-          });
+                                that.view.showModelProperties();
+                                const viewNode = e.current.getAttr("view.data");
+                                that.view.showNodeProperties(viewNode);
+                            },
+                        },
+                    });
 
-          leafer.add(node_leafer);
+                    leafer.add(node_leafer);
 
-          node_leafer.setAttr("view.data", viewOutput);
+                    node_leafer.setAttr("view.data", viewOutput);
                     for (const value of argument.value) {
                         this.createValue(value).to.push(viewOutput);
                     }
@@ -2572,10 +2613,10 @@ view.Value = class {
     build() {
         this._edges = this._edges || [];
         if (this.from && Array.isArray(this.to)) {
-      const from_node_leafer = leafer.findId(this.from.id);
+            const from_node_leafer = leafer.findId(this.from.id);
             for (let i = 0; i < this.to.length; i++) {
                 const to = this.to[i];
-        const to_node_leafer = leafer.findId(to.id);
+                const to_node_leafer = leafer.findId(to.id);
                 let content = '';
                 const type = this.value.type;
                 if (type &&
@@ -2602,25 +2643,24 @@ view.Value = class {
                 }
                 this.context.setEdge(edge);
                 this._edges.push(edge);
-        console.log(edge.id);
-        if (!leafer.findId(edge.id)) {
-          const link = new LeaferX.connector.LeaferXQnConnector(
-            from_node_leafer,
-            to_node_leafer
-          );
-          link.id = edge.id;
-          link.tag = "Link";
-          link.visible = false;
-          leafer.add(link);
-        } else {
-          const link = new LeaferX.connector.LeaferXQnConnector(
-            from_node_leafer,
-            to_node_leafer
-          );
-          link.tag = "Link";
-          link.visible = false;
-          leafer.add(link);
-        }
+                if (!leafer.findId(edge.id)) {
+                    const link = new LeaferX.connector.LeaferXQnConnector(
+                        from_node_leafer,
+                        to_node_leafer
+                    );
+                    link.id = edge.id;
+                    link.tag = "Link";
+                    link.visible = false;
+                    leafer.add(link);
+                } else {
+                    const link = new LeaferX.connector.LeaferXQnConnector(
+                        from_node_leafer,
+                        to_node_leafer
+                    );
+                    link.tag = "Link";
+                    link.visible = false;
+                    leafer.add(link);
+                }
             }
         }
     }

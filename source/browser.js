@@ -34,6 +34,13 @@ host.BrowserHost = class {
         if (!/^\d\.\d\.\d$/.test(this.version)) {
             throw new Error('Invalid version.');
         }
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        if (mediaQuery.matches) {
+            console.log('当前设备处于深色模式');
+        } else {
+            console.log('当前设备处于浅色模式');
+        }
     }
 
     get window() {
