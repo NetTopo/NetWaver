@@ -1894,7 +1894,7 @@ view.Graph = class extends grapher.Graph {
             strokeWidth:1,
             // hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
             selectedStyle: {
-                fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)`,
+                fill:  `rgba(${color[0]},${color[1]},${color[2]},0.0)`,
                 stroke:"#ff0000",
                 strokeWidth:2,
             },
@@ -2024,9 +2024,9 @@ view.Graph = class extends grapher.Graph {
                         cornerRadius: 0,
                         draggable: true,
                         hoverStyle: { 
-                            // fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)`,
-                            stroke:"#ff0000",
-                            strokeWidth:1,
+                            fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`,
+                            // stroke:"#ff0000",
+                            // strokeWidth:1,
                         },
                         // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
                         // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
