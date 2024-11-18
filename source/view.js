@@ -1876,7 +1876,7 @@ view.Graph = class extends grapher.Graph {
       
         const category = node.type && node.type.category ? node.type.category : '';
         // console.log(category);
-        const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
+        const color = (mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()]) || [0, 0, 0,1.0] ;
 
         console.log(obj.inputs);
 
