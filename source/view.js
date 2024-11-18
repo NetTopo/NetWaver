@@ -2722,6 +2722,7 @@ view.Value = class {
     }
 
     build() {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         this._edges = this._edges || [];
         if (this.from && Array.isArray(this.to)) {
             const from_node_leafer = leafer.findId(this.from.id);
@@ -2762,7 +2763,7 @@ view.Value = class {
                     link.id = edge.id;
                     link.tag = "Link";
                     link.strokeWidth = 1;
-                    link.stroke = '#000000';
+                    link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
                     leafer.add(link);
                 } else {
@@ -2772,7 +2773,7 @@ view.Value = class {
                     );
                     link.tag = "Link";
                     link.strokeWidth = 1;
-                    link.stroke = '#000000';
+                    link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
                     leafer.add(link);
                 }
