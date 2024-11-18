@@ -327,6 +327,7 @@ host.BrowserHost = class {
                 }
             }
             if (error.context) {
+                console.log(error.context);
                 context = typeof error.context === 'string' ? error.context : JSON.stringify(error.context);
             }
             this._telemetry.send('exception', {

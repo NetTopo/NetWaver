@@ -793,6 +793,7 @@ view.View = class {
             }
             return await this._updateGraph(model, stack);
         } catch (error) {
+            console.error(error)
             error.context = !error.context && context && context.identifier ? context.identifier : error.context || '';
             throw error;
         }
@@ -1874,10 +1875,10 @@ view.Graph = class extends grapher.Graph {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       
         const category = node.type && node.type.category ? node.type.category : '';
-        console.log(category);
+        // console.log(category);
         const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
-        
-        const node_leafer = new LeaferUI.Box({
+
+        const box = new LeaferUI.Box({
             id: obj.id,
             x: 100,
             y: 100,
@@ -1946,8 +1947,8 @@ view.Graph = class extends grapher.Graph {
             },
         });
 
-        leafer.add(node_leafer);
-        node_leafer.setAttr("view.data", obj);
+        leafer.add(box);
+        box.setAttr("view.data", obj);
         return obj;
     }
 
@@ -2040,7 +2041,7 @@ view.Graph = class extends grapher.Graph {
         obj.name = (this._nodeKey++).toString();
         this._table.set(output, obj);
         obj.id = obj.name;
-        
+
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const node_leafer = new LeaferUI.Box({
             id: obj.id,
@@ -2309,7 +2310,9 @@ view.Node = class extends grapher.Node {
         this.value = value;
         this.id = `node-${value.name ? `name-${value.name}` : `id-${(context.counter++)}`}`;
         this._add(value, type);
+
         const inputs = value.inputs;
+        console.log(inputs);
         if (type !== 'graph' && Array.isArray(inputs)) {
             for (const argument of inputs) {
                 if (!argument.type || argument.type.endsWith('*')) {
