@@ -328,9 +328,9 @@ grapher.Graph = class {
                             child.height = node.height / node_leafer.children.length;
                             // child.padding = [node.height / 2, node.width / 2]; 
                             if (node_leafer.children.length === 1){
-                                console.log(node.height / 2, node.width / 2);
-                                console.log(child.children[0].textAlign)
-                                console.log(child.children[0].verticalAlign)
+                                // console.log(node.height / 2, node.width / 2);
+                                // console.log(child.children[0].textAlign)
+                                // console.log(child.children[0].verticalAlign)
                                 child.children[0].width = node.width;
                                 child.children[0].height = node.height / node_leafer.children.length;
                                 child.children[0].textAlign =  "center";

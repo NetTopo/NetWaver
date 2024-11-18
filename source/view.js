@@ -1879,6 +1879,7 @@ view.Graph = class extends grapher.Graph {
         const color = (mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()]) || [0, 0, 0,1.0] ;
 
         console.log(obj.inputs);
+        const  tensors = obj.context._tensors;
 
         const node_flow = new LeaferIN.flow.Flow({
             id: obj.id,
@@ -2001,6 +2002,8 @@ view.Graph = class extends grapher.Graph {
         const options = this.options;
         if (Array.isArray(inputs)) {
             for (const argument of inputs) {
+                const tensor = tensors.get(argument);
+                console.log(tensor);
                 const type = argument.type;
                 if (argument.visible !== false &&
                     ((type === 'graph') ||
@@ -2033,7 +2036,7 @@ view.Graph = class extends grapher.Graph {
                         children: [
                             {
                                 tag: "Text",
-                                text: argument.name,
+                                text: tensor? `${argument.name}${tensor.content}` : argument.name,
                                 fill:mediaQuery.matches ? "white" : "black",
                                 padding: [0, 0,0,2],
                                 // textAlign: "center",
