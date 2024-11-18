@@ -1870,6 +1870,84 @@ view.Graph = class extends grapher.Graph {
         const obj = new view.Node(this, node);
         obj.name = (this._nodeKey++).toString();
         this._table.set(node, obj);
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      
+        const category = node.type && node.type.category ? node.type.category : '';
+        console.log(category);
+        const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
+        
+        const node_leafer = new LeaferUI.Box({
+            id: obj.id,
+            x: 100,
+            y: 100,
+            width: 0,
+            height: 0,
+            // fill: "rgba(102,153,204,0.4)",
+            fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
+            cornerRadius: 4,
+            visible:false,
+            stroke:"#000000",
+            strokeWidth:1,
+            // hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
+            // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            cursor: 'pointer',
+            // innerShadow: {
+            //   x: 0,
+            //   y: 0,
+            //   blur: 20,
+            //   color: "rgba(102,153,204,0.6)",
+            // },
+            // focusStyle: {
+            //   stroke: "rgba(102,153,204,0.4)",
+            // },
+            children: [
+                {
+                    tag: "Text",
+                    text: obj.content,
+                    // fill:mediaQuery.matches ? "white" : "black",
+                    fill:"white",
+                    padding: [0, 0],
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    fontSize: 10,
+                },
+            ],
+            draggable: true,
+            event: {
+                //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(102,153,204,0.8)";
+                //   },
+                //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(102,153,204,0.4)";
+                //   },
+                [LeaferUI.PointerEvent.DOWN]: (e) => {
+                    // console.log(e);
+                    if (this.view.currentSelectNode) {
+                        this.view.currentSelectNode.selected = false;
+                        this.view.currentSelectNode.shadow  = false;
+                    }
+
+                    e.current.selected = true;
+                    e.current.shadow  =  {
+                        x: 6,
+                        y: 6,
+                        blur: 6,
+                        color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
+                    };
+                    this.view.currentSelectNode = e.current;
+                    this.view.showModelProperties();
+                    const obj = e.current.getAttr("view.data");
+                    this.view.showNodeProperties(obj);
+                },
+            },
+        });
+
+        leafer.add(node_leafer);
+        node_leafer.setAttr("view.data", obj);
         return obj;
     }
 
@@ -1884,6 +1962,76 @@ view.Graph = class extends grapher.Graph {
         const obj = new view.Input(this, input);
         obj.name = (this._nodeKey++).toString();
         this._table.set(input, obj);
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const node_leafer = new LeaferUI.Box({
+            id: obj.id,
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+            fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
+            visible:false,
+            cornerRadius: 4,
+            stroke:"#000000",
+            strokeWidth:1,
+            // innerShadow: {
+            //   x: 0,
+            //   y: 0,
+            //   blur: 20,
+            //   color: "rgba(102,153,204,0.6)",
+            // },
+            // focusStyle: {
+            //   stroke: "rgba(102,153,204,0.4)",
+            // },
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
+            // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
+            cursor: 'pointer',
+            children: [
+                {
+                    tag: "Text",
+                    text: obj.value.name,
+                    fill: mediaQuery.matches? "white" :"black",
+                    padding: [0, 0],
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    fontSize: 10,
+                },
+            ],
+            draggable: true,
+            event: {
+                //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(102,153,204,0.8)";
+                //   },
+                //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(0,0,0,0.4)";
+                //   },
+                [LeaferUI.PointerEvent.DOWN]: (e) => {
+                    // console.log(e);
+                    // e.current.fill = "#FF9966";
+                    if (this.view.currentSelectNode) {
+                        this.view.currentSelectNode.selected = false;
+                        this.view.currentSelectNode.shadow  = false;
+                    }
+                    e.current.selected = true;
+                    e.current.shadow  =  {
+                        x: 6,
+                        y: 6,
+                        blur: 6,
+                        color: mediaQuery.matches? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
+                    };
+                    this.view.currentSelectNode = e.current;
+                    this.view.showModelProperties();
+                    const viewNode = e.current.getAttr("view.data");
+                    this.view.showNodeProperties(viewNode);
+                },
+            },
+        });
+        leafer.add(node_leafer);
+        node_leafer.setAttr("view.data", obj);
         return obj;
     }
 
@@ -1891,6 +2039,70 @@ view.Graph = class extends grapher.Graph {
         const obj = new view.Output(this, output);
         obj.name = (this._nodeKey++).toString();
         this._table.set(output, obj);
+        obj.id = obj.name;
+        
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const node_leafer = new LeaferUI.Box({
+            id: obj.id,
+            x: 100,
+            y: 100,
+            width: 0,
+            height: 0,
+            fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
+            cornerRadius: 4,
+            visible:false,
+            stroke:"#000000",
+            strokeWidth:1,
+            children: [
+                {
+                    tag: "Text",
+                    text: obj.value.name,
+                    fill: mediaQuery.matches? "white" :"black",
+                    padding: [0, 0],
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    fontSize: 10,
+                },
+            ],
+            draggable: true,
+            // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
+            // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            cursor: 'pointer',
+            event: {
+                //   [LeaferUI.PointerEvent.ENTER]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(255,0,0,0.8)";
+                //   },
+                //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
+                //     // console.log(e);
+                //     e.current.fill = "rgba(255,0,0,0.4)";
+                //   },
+                [LeaferUI.PointerEvent.DOWN]: (e) => {
+                    // console.log(e);
+                    if (this.view.currentSelectNode) {
+                        this.view.currentSelectNode.selected = false;
+                        this.view.currentSelectNode.shadow  = false;
+                    }
+                    e.current.selected = true;
+                    this.view.currentSelectNode = e.current;
+                    e.current.shadow  =  {
+                        x: 6,
+                        y: 6,
+                        blur: 6,
+                        color: mediaQuery.matches ? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
+                    };
+
+                    this.view.showModelProperties();
+                    const viewNode = e.current.getAttr("view.data");
+                    this.view.showNodeProperties(viewNode);
+                },
+            },
+        });
+
+        leafer.add(node_leafer);
+        node_leafer.setAttr("view.data", obj);
+
         return obj;
     }
 
@@ -1952,159 +2164,14 @@ view.Graph = class extends grapher.Graph {
                     for (const value of argument.value) {
                         this.createValue(value).from = viewInput;
                     }
-                    const node_leafer = new LeaferUI.Box({
-                        id: viewInput.id,
-                        x: 0,
-                        y: 0,
-                        width: 0,
-                        height: 0,
-                        fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
-                        visible:false,
-                        cornerRadius: 4,
-                        stroke:"#000000",
-                        strokeWidth:1,
-                        // innerShadow: {
-                        //   x: 0,
-                        //   y: 0,
-                        //   blur: 20,
-                        //   color: "rgba(102,153,204,0.6)",
-                        // },
-                        // focusStyle: {
-                        //   stroke: "rgba(102,153,204,0.4)",
-                        // },
-                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-                        // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
-                        // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
-                        cursor: 'pointer',
-                        children: [
-                            {
-                                tag: "Text",
-                                text: viewInput.value.name,
-                                fill: mediaQuery.matches? "white" :"black",
-                                padding: [0, 0],
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                                fontSize: 10,
-                            },
-                        ],
-                        draggable: true,
-                        event: {
-                            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-                            //     // console.log(e);
-                            //     e.current.fill = "rgba(102,153,204,0.8)";
-                            //   },
-                            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-                            //     // console.log(e);
-                            //     e.current.fill = "rgba(0,0,0,0.4)";
-                            //   },
-                            [LeaferUI.PointerEvent.DOWN]: (e) => {
-                                // console.log(e);
-                                // e.current.fill = "#FF9966";
-                                if (that.view.currentSelectNode) {
-                                    that.view.currentSelectNode.selected = false;
-                                    that.view.currentSelectNode.shadow  = false;
-                                }
-                                e.current.selected = true;
-                                e.current.shadow  =  {
-                                    x: 6,
-                                    y: 6,
-                                    blur: 6,
-                                    color: mediaQuery.matches? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
-                                };
-                                that.view.currentSelectNode = e.current;
-                                that.view.showModelProperties();
-                                const viewNode = e.current.getAttr("view.data");
-                                that.view.showNodeProperties(viewNode);
-                            },
-                        },
-                    });
-                    leafer.add(node_leafer);
-                    node_leafer.setAttr("view.data", viewInput);
-
                 }
             }
         }
         for (const node of graph.nodes) {
             const viewNode = this.createNode(node);
             this.setNode(viewNode);
-
             console.log(viewNode);
 
-            const category = node.type && node.type.category ? node.type.category : '';
-            console.log(category);
-            const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
-            
-            const node_leafer = new LeaferUI.Box({
-                id: viewNode.id,
-                x: 100,
-                y: 100,
-                width: 0,
-                height: 0,
-                // fill: "rgba(102,153,204,0.4)",
-                fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
-                cornerRadius: 4,
-                visible:false,
-                stroke:"#000000",
-                strokeWidth:1,
-                // hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
-                // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
-                // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-                cursor: 'pointer',
-                // innerShadow: {
-                //   x: 0,
-                //   y: 0,
-                //   blur: 20,
-                //   color: "rgba(102,153,204,0.6)",
-                // },
-                // focusStyle: {
-                //   stroke: "rgba(102,153,204,0.4)",
-                // },
-                children: [
-                    {
-                        tag: "Text",
-                        text: viewNode.content,
-                        // fill:mediaQuery.matches ? "white" : "black",
-                        fill:"white",
-                        padding: [0, 0],
-                        textAlign: "center",
-                        verticalAlign: "middle",
-                        fontSize: 10,
-                    },
-                ],
-                draggable: true,
-                event: {
-                    //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-                    //     // console.log(e);
-                    //     e.current.fill = "rgba(102,153,204,0.8)";
-                    //   },
-                    //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-                    //     // console.log(e);
-                    //     e.current.fill = "rgba(102,153,204,0.4)";
-                    //   },
-                    [LeaferUI.PointerEvent.DOWN]: (e) => {
-                        // console.log(e);
-                        if (that.view.currentSelectNode) {
-                            that.view.currentSelectNode.selected = false;
-                            that.view.currentSelectNode.shadow  = false;
-                        }
-
-                        e.current.selected = true;
-                        e.current.shadow  =  {
-                            x: 6,
-                            y: 6,
-                            blur: 6,
-                            color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
-                        };
-                        that.view.currentSelectNode = e.current;
-                        that.view.showModelProperties();
-                        const viewNode = e.current.getAttr("view.data");
-                        that.view.showNodeProperties(viewNode);
-                    },
-                },
-            });
-
-            leafer.add(node_leafer);
-            node_leafer.setAttr("view.data", viewNode);
             let outputs = node.outputs;
             if (node.chain && node.chain.length > 0) {
                 const chainOutputs = node.chain[node.chain.length - 1].outputs;
@@ -2165,74 +2232,10 @@ view.Graph = class extends grapher.Graph {
             for (const argument of outputs) {
                 if (argument.visible !== false) {
                     const viewOutput = this.createOutput(argument);
-                    viewOutput.id = viewOutput.name;
+                   
                     this.setNode(viewOutput);
                     console.log(viewOutput);
-
-                    const width = viewOutput.width || 40;
-                    const height = viewOutput.height || 20;
-
-                    const node_leafer = new LeaferUI.Box({
-                        id: viewOutput.id,
-                        x: 100,
-                        y: 100,
-                        width: 0,
-                        height: 0,
-                        fill: mediaQuery.matches ? "rgba(64,64,64,1.0)" : "rgba(238,238,238,1.0)",
-                        cornerRadius: 4,
-                        visible:false,
-                        stroke:"#000000",
-                        strokeWidth:1,
-                        children: [
-                            {
-                                tag: "Text",
-                                text: viewOutput.value.name,
-                                fill: mediaQuery.matches? "white" :"black",
-                                padding: [0, 0],
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                                fontSize: 10,
-                            },
-                        ],
-                        draggable: true,
-                        // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
-                        // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
-                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
-                        cursor: 'pointer',
-                        event: {
-                            //   [LeaferUI.PointerEvent.ENTER]: (e) => {
-                            //     // console.log(e);
-                            //     e.current.fill = "rgba(255,0,0,0.8)";
-                            //   },
-                            //   [LeaferUI.PointerEvent.LEAVE]: (e) => {
-                            //     // console.log(e);
-                            //     e.current.fill = "rgba(255,0,0,0.4)";
-                            //   },
-                            [LeaferUI.PointerEvent.DOWN]: (e) => {
-                                // console.log(e);
-                                if (that.view.currentSelectNode) {
-                                    that.view.currentSelectNode.selected = false;
-                                    that.view.currentSelectNode.shadow  = false;
-                                }
-                                e.current.selected = true;
-                                that.view.currentSelectNode = e.current;
-                                e.current.shadow  =  {
-                                    x: 6,
-                                    y: 6,
-                                    blur: 6,
-                                    color: mediaQuery.matches ? 'rgba(0,0,0,1.0)': 'rgba(64,64,64,1.0)'
-                                };
-
-                                that.view.showModelProperties();
-                                const viewNode = e.current.getAttr("view.data");
-                                that.view.showNodeProperties(viewNode);
-                            },
-                        },
-                    });
-
-                    leafer.add(node_leafer);
-
-                    node_leafer.setAttr("view.data", viewOutput);
+                    
                     for (const value of argument.value) {
                         this.createValue(value).to.push(viewOutput);
                     }
