@@ -436,15 +436,18 @@ view.View = class {
     }
 
     zoomIn() {
-        this._updateZoom(this._zoom * 1.1);
+        // this._updateZoom(this._zoom * 1.1);
+        this.leafer.zoom("in", this._zoom * 1.1);
     }
 
     zoomOut() {
-        this._updateZoom(this._zoom * 0.9);
+        // this._updateZoom(this._zoom * 0.9);
+        this.leafer.zoom("out", this._zoom * 0.9);
     }
 
     resetZoom() {
-        this._updateZoom(1);
+        // this._updateZoom(1);
+        this.leafer.zoom("fit", 1);
     }
 
     _activate() {
@@ -2758,10 +2761,26 @@ view.Value = class {
                 }
                 this.context.setEdge(edge);
                 this._edges.push(edge);
+                const opt = {
+                    opt1: {
+                    //   margin: 25, // 比外层优先级更高
+                    //   arrow: "arrow",
+                      // arrowType:'circle'
+                    },
+                    opt2: {
+                    //   percent: 0.8,
+                    //   margin: 5,
+                      arrow: "angle",
+                    },
+                    // padding: 10,
+                    // margin: 10,
+                    type: "default", // default , straight ,curve
+                  };
                 if (!leafer.findId(edge.id)) {
                     const link = new LeaferX.connector.LeaferXQnConnector(
                         from_node_leafer,
-                        to_node_leafer
+                        to_node_leafer,
+                        opt
                     );
                     link.id = edge.id;
                     link.tag = "Link";
@@ -2772,7 +2791,8 @@ view.Value = class {
                 } else {
                     const link = new LeaferX.connector.LeaferXQnConnector(
                         from_node_leafer,
-                        to_node_leafer
+                        to_node_leafer,
+                        opt
                     );
                     link.tag = "Link";
                     link.strokeWidth = 1;
