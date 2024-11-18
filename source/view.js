@@ -177,12 +177,12 @@ view.View = class {
                         execute: async () => await this.export(`${this._host.document.title}.png`),
                         enabled: () => this.activeGraph
                     });
-                    file.add({
-                        label: 'Export as &SVG',
-                        accelerator: 'CmdOrCtrl+Alt+E',
-                        execute: async () => await this.export(`${this._host.document.title}.svg`),
-                        enabled: () => this.activeGraph
-                    });
+                    // file.add({
+                    //     label: 'Export as &SVG',
+                    //     accelerator: 'CmdOrCtrl+Alt+E',
+                    //     execute: async () => await this.export(`${this._host.document.title}.svg`),
+                    //     enabled: () => this.activeGraph
+                    // });
                 }
                 const edit = this._menu.group('&Edit');
                 edit.add({
@@ -1044,75 +1044,77 @@ view.View = class {
     }
 
     async export(file) {
+       
         const lastIndex = file.lastIndexOf('.');
         const extension = lastIndex === -1 ? 'png' : file.substring(lastIndex + 1).toLowerCase();
         if (this.activeGraph && (extension === 'png' || extension === 'svg')) {
-            const canvas = this._element('canvas');
-            const clone = canvas.cloneNode(true);
-            this.applyStyleSheet(clone, 'grapher.css');
-            clone.setAttribute('id', 'export');
-            clone.removeAttribute('viewBox');
-            clone.removeAttribute('width');
-            clone.removeAttribute('height');
-            clone.style.removeProperty('opacity');
-            clone.style.removeProperty('display');
-            clone.style.removeProperty('width');
-            clone.style.removeProperty('height');
-            const background = clone.querySelector('#background');
-            clone.getElementById('edge-paths-hit-test').remove();
-            const origin = clone.querySelector('#origin');
-            origin.setAttribute('transform', 'translate(0,0) scale(1)');
-            background.removeAttribute('width');
-            background.removeAttribute('height');
-            const parent = canvas.parentElement;
-            parent.insertBefore(clone, canvas);
-            const size = clone.getBBox();
-            parent.removeChild(clone);
-            parent.removeChild(canvas);
-            parent.appendChild(canvas);
-            const delta = (Math.min(size.width, size.height) / 2.0) * 0.1;
-            const width = Math.ceil(delta + size.width + delta);
-            const height = Math.ceil(delta + size.height + delta);
-            origin.setAttribute('transform', `translate(${(delta - size.x)}, ${(delta - size.y)}) scale(1)`);
-            clone.setAttribute('width', width);
-            clone.setAttribute('height', height);
-            background.setAttribute('width', width);
-            background.setAttribute('height', height);
-            background.setAttribute('fill', '#fff');
-            const data = new XMLSerializer().serializeToString(clone);
+            // const canvas = this._element('canvas');
+            // const clone = canvas.cloneNode(true);
+            // this.applyStyleSheet(clone, 'grapher.css');
+            // clone.setAttribute('id', 'export');
+            // clone.removeAttribute('viewBox');
+            // clone.removeAttribute('width');
+            // clone.removeAttribute('height');
+            // clone.style.removeProperty('opacity');
+            // clone.style.removeProperty('display');
+            // clone.style.removeProperty('width');
+            // clone.style.removeProperty('height');
+            // const background = clone.querySelector('#background');
+            // clone.getElementById('edge-paths-hit-test').remove();
+            // const origin = clone.querySelector('#origin');
+            // origin.setAttribute('transform', 'translate(0,0) scale(1)');
+            // background.removeAttribute('width');
+            // background.removeAttribute('height');
+            // const parent = canvas.parentElement;
+            // parent.insertBefore(clone, canvas);
+            // const size = clone.getBBox();
+            // parent.removeChild(clone);
+            // parent.removeChild(canvas);
+            // parent.appendChild(canvas);
+            // const delta = (Math.min(size.width, size.height) / 2.0) * 0.1;
+            // const width = Math.ceil(delta + size.width + delta);
+            // const height = Math.ceil(delta + size.height + delta);
+            // origin.setAttribute('transform', `translate(${(delta - size.x)}, ${(delta - size.y)}) scale(1)`);
+            // clone.setAttribute('width', width);
+            // clone.setAttribute('height', height);
+            // background.setAttribute('width', width);
+            // background.setAttribute('height', height);
+            // background.setAttribute('fill', '#fff');
+            // const data = new XMLSerializer().serializeToString(clone);
             if (extension === 'svg') {
-                const blob = new Blob([data], { type: 'image/svg' });
-                await this._host.export(file, blob);
+                // const blob = new Blob([data], { type: 'image/svg' });
+                // await this._host.export(file, blob);
             }
             if (extension === 'png') {
                 try {
-                    const blob = await new Promise((resolve, reject) => {
-                        const image = new Image();
-                        image.onload = async () => {
-                            const max = Math.max(width, height);
-                            const scale = Math.min(24000.0 / max, 2.0);
-                            const canvas = this._host.document.createElement('canvas');
-                            canvas.width = Math.ceil(width * scale);
-                            canvas.height = Math.ceil(height * scale);
-                            const context = canvas.getContext('2d');
-                            context.scale(scale, scale);
-                            context.drawImage(image, 0, 0);
-                            canvas.toBlob((blob) => {
-                                if (blob) {
-                                    resolve(blob);
-                                } else {
-                                    const error = new Error('Image may be too large to render as PNG.');
-                                    error.name = 'Error exporting image.';
-                                    reject(error);
-                                }
-                            }, 'image/png');
-                        };
-                        image.onerror = (error) => {
-                            reject(error);
-                        };
-                        image.src = `data:image/svg+xml;base64,${this._host.window.btoa(unescape(encodeURIComponent(data)))}`;
-                    });
-                    await this._host.export(file, blob);
+                    // const blob = await new Promise((resolve, reject) => {
+                    //     const image = new Image();
+                    //     image.onload = async () => {
+                    //         const max = Math.max(width, height);
+                    //         const scale = Math.min(24000.0 / max, 2.0);
+                    //         const canvas = this._host.document.createElement('canvas');
+                    //         canvas.width = Math.ceil(width * scale);
+                    //         canvas.height = Math.ceil(height * scale);
+                    //         const context = canvas.getContext('2d');
+                    //         context.scale(scale, scale);
+                    //         context.drawImage(image, 0, 0);
+                    //         canvas.toBlob((blob) => {
+                    //             if (blob) {
+                    //                 resolve(blob);
+                    //             } else {
+                    //                 const error = new Error('Image may be too large to render as PNG.');
+                    //                 error.name = 'Error exporting image.';
+                    //                 reject(error);
+                    //             }
+                    //         }, 'image/png');
+                    //     };
+                    //     image.onerror = (error) => {
+                    //         reject(error);
+                    //     };
+                    //     image.src = `data:image/svg+xml;base64,${this._host.window.btoa(unescape(encodeURIComponent(data)))}`;
+                    // });
+                    // await this._host.export(file, blob);
+                    this.leafer.export(file,{ pixelRatio: 1 });
                 } catch (error) {
                     await this.error(error);
                 }
