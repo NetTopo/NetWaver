@@ -177,10 +177,16 @@ view.View = class {
                         execute: async () => await this.export(`${this._host.document.title}.png`),
                         enabled: () => this.activeGraph
                     });
+                    file.add({
+                        label: 'Export as &JSON',
+                        accelerator: 'CmdOrCtrl+Alt+E',
+                        execute: async () => await this.export(`${this._host.document.title}.json`),
+                        enabled: () => this.activeGraph
+                    });
                     // file.add({
-                    //     label: 'Export as &SVG',
-                    //     accelerator: 'CmdOrCtrl+Alt+E',
-                    //     execute: async () => await this.export(`${this._host.document.title}.svg`),
+                    //     label: 'Import From &JSON',
+                    //     accelerator: 'CmdOrCtrl+Alt+L',
+                    //     execute: async () => await this.loadByJson(),
                     //     enabled: () => this.activeGraph
                     // });
                 }
@@ -1043,11 +1049,15 @@ view.View = class {
         }
     }
 
+    async loadByJson() {
+
+    }
+
     async export(file) {
        
         const lastIndex = file.lastIndexOf('.');
         const extension = lastIndex === -1 ? 'png' : file.substring(lastIndex + 1).toLowerCase();
-        if (this.activeGraph && (extension === 'png' || extension === 'svg')) {
+        if (this.activeGraph && (extension === 'png' || extension === 'json')) {
             // const canvas = this._element('canvas');
             // const clone = canvas.cloneNode(true);
             // this.applyStyleSheet(clone, 'grapher.css');
@@ -1081,9 +1091,21 @@ view.View = class {
             // background.setAttribute('height', height);
             // background.setAttribute('fill', '#fff');
             // const data = new XMLSerializer().serializeToString(clone);
-            if (extension === 'svg') {
+            if (extension === 'json') {
                 // const blob = new Blob([data], { type: 'image/svg' });
                 // await this._host.export(file, blob);
+                const jsonStr = JSON.stringify(leafer.toJSON(), null, 2); // 2 是缩进，用于格式化输出
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+            
+                const url = URL.createObjectURL(blob);
+            
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file;  
+                document.body.appendChild(a);
+                a.click(); 
+                document.body.removeChild(a); 
+                URL.revokeObjectURL(url);
             }
             if (extension === 'png') {
                 try {
