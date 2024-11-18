@@ -1878,22 +1878,29 @@ view.Graph = class extends grapher.Graph {
         // console.log(category);
         const color = mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()] ;
 
-        const box = new LeaferUI.Box({
+        console.log(obj.inputs);
+
+        const node_flow = new LeaferIN.flow.Flow({
             id: obj.id,
-            x: 100,
-            y: 100,
-            width: 0,
-            height: 0,
-            // fill: "rgba(102,153,204,0.4)",
-            fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
-            cornerRadius: 4,
+            x: 0,
+            y: 0,
+            width: 100,
+            height: 100,
+            fill: "rgba(102,153,204,0.0)",
+            // fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
+            cornerRadius:4,
             visible:false,
             stroke:"#000000",
             strokeWidth:1,
             // hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
-            // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+            selectedStyle: {
+                fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)`,
+                stroke:"#ff0000",
+                strokeWidth:2,
+            },
             // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
             cursor: 'pointer',
+            overflow:'hide',
             // innerShadow: {
             //   x: 0,
             //   y: 0,
@@ -1903,18 +1910,25 @@ view.Graph = class extends grapher.Graph {
             // focusStyle: {
             //   stroke: "rgba(102,153,204,0.4)",
             // },
-            children: [
-                {
-                    tag: "Text",
-                    text: obj.content,
-                    // fill:mediaQuery.matches ? "white" : "black",
-                    fill:"white",
-                    padding: [0, 0],
-                    textAlign: "center",
-                    verticalAlign: "middle",
-                    fontSize: 10,
-                },
-            ],
+            flow: "y",
+            // gap: { x: 0, y: "auto" },
+            flowAlign: {
+                content: "bottom-left",
+                x: "from",
+            },
+            // flowWrap: true,
+            // children: [
+            //     {
+            //         tag: "Text",
+            //         text: obj.content,
+            //         // fill:mediaQuery.matches ? "white" : "black",
+            //         fill:"white",
+            //         padding: [0, 0],
+            //         textAlign: "center",
+            //         verticalAlign: "middle",
+            //         fontSize: 10,
+            //     },
+            // ],
             draggable: true,
             event: {
                 //   [LeaferUI.PointerEvent.ENTER]: (e) => {
@@ -1933,12 +1947,12 @@ view.Graph = class extends grapher.Graph {
                     }
 
                     e.current.selected = true;
-                    e.current.shadow  =  {
-                        x: 6,
-                        y: 6,
-                        blur: 6,
-                        color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
-                    };
+                    // e.current.shadow  =  {
+                    //     x: 6,
+                    //     y: 6,
+                    //     blur: 6,
+                    //     color:  `rgba(${color[0]},${color[1]},${color[2]},1.0)`
+                    // };
                     this.view.currentSelectNode = e.current;
                     this.view.showModelProperties();
                     const obj = e.current.getAttr("view.data");
@@ -1947,8 +1961,102 @@ view.Graph = class extends grapher.Graph {
             },
         });
 
-        leafer.add(box);
-        box.setAttr("view.data", obj);
+        leafer.add(node_flow);
+        node_flow.setAttr("view.data", obj);
+
+        const node_text = new LeaferUI.Box({
+            x: 0,
+            y: 0,
+            // width:200,
+            // height:200,
+            fill:  `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`,
+            stroke:'rgba(0,0,0,1.0)',
+            strokeWidth:1,
+            cornerRadius: 0,
+            draggable: true,
+            hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
+            selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+            // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+            children: [
+                {
+                    tag: "Text",
+                    text: obj.content,
+                    // fill:mediaQuery.matches ? "white" : "black",
+                    fill: "white" ,
+                    padding: [0, 0,0,2],
+                    // textAlign: "center",
+                    // verticalAlign: "middle",
+                    fontSize: 10,
+                    // lineHeight: {
+                    //     type: "percent",
+                    //     value: 1.5, // 150%
+                    // },
+                },
+            ],
+        });
+
+        node_flow.add(node_text);
+
+        const inputs = node.inputs;
+        const options = this.options;
+        if (Array.isArray(inputs)) {
+            for (const argument of inputs) {
+                const type = argument.type;
+                if (argument.visible !== false &&
+                    ((type === 'graph') ||
+                    (type === 'object' && isObject(argument.value)) ||
+                    (type === 'object[]' || type === 'function' || type === 'function[]'))) {
+                    // objects.push(argument);
+                    console.log(argument);
+                } else if (options.weights && argument.visible !== false && argument.type !== 'attribute' && Array.isArray(argument.value) && argument.value.length === 1 && argument.value[0].initializer) {
+                    // const item = this.context.createArgument(argument);
+                    // list().add(item);
+                    console.log(argument);
+
+                    const node_argument = new LeaferUI.Box({
+                        x: 0,
+                        y: 0,
+                        // width:200,
+                        // height:200,
+                        fill: "rgba(255,255,255,1.0)",
+                        stroke:'rgba(0,0,0,1.0)',
+                        strokeWidth:0,
+                        cornerRadius: 0,
+                        draggable: true,
+                        hoverStyle: { 
+                            // fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)`,
+                            stroke:"#ff0000",
+                            strokeWidth:1,
+                        },
+                        // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+                        children: [
+                            {
+                                tag: "Text",
+                                text: argument.name,
+                                fill:mediaQuery.matches ? "white" : "black",
+                                padding: [0, 0,0,2],
+                                // textAlign: "center",
+                                // verticalAlign: "middle",
+                                fontSize: 10,
+                                lineHeight: {
+                                    type: "percent",
+                                    value: 1.5, // 150%
+                                },
+                            },
+                        ],
+                    });
+                    node_flow.add(node_argument);
+                } else if (options.weights && (argument.visible === false || Array.isArray(argument.value) && argument.value.length > 1) && (!argument.type || argument.type.endsWith('*')) && argument.value.some((value) => value !== null && value.initializer)) {
+                    // hiddenTensors = true;
+                    console.log(argument);
+                } else if (options.attributes && argument.visible !== false && argument.type && !argument.type.endsWith('*')) {
+                    // const item = attribute(argument);
+                    // list().add(item);
+                    console.log(argument);
+                }
+            }
+        }
         return obj;
     }
 
@@ -2426,6 +2534,7 @@ view.Node = class extends grapher.Node {
 
             return false;
         };
+
         const inputs = node.inputs;
         if (Array.isArray(inputs)) {
             for (const argument of inputs) {
@@ -2446,6 +2555,7 @@ view.Node = class extends grapher.Node {
                 }
             }
         }
+        
         if (Array.isArray(node.attributes)) {
             const attributes = node.attributes.slice();
             attributes.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()));

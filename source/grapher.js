@@ -296,59 +296,125 @@ grapher.Graph = class {
         return '';
     }
 
-  update() {
-    for (const nodeId of this.nodes.keys()) {
-      if (this.children(nodeId).length === 0) {
-        // node
-        const entry = this.node(nodeId);
-        const node = entry.label;
-        node.update();
+    update() {
+        for (const nodeId of this.nodes.keys()) {
+            if (this.children(nodeId).length === 0) {
+                // node
+                const entry = this.node(nodeId);
+                const node = entry.label;
+                node.update();
 
-        const node_leafer = leafer.findId(node.id);
-        node_leafer.width = node.width;
-        node_leafer.height = node.height;
+                const node_leafer = leafer.findId(node.id);
+                node_leafer.width = node.width;
+                node_leafer.height = node.height;
 
-        // node_leafer.children[0].padding = [node.height / 2, node.width / 2]; // text
-        node_leafer.children[0].width = node.width;
-        node_leafer.children[0].height = node.height;
-        // node_leafer.children[0].text = node.height;
-        node_leafer.x = node.x - node.width / 2;
-        node_leafer.y = node.y - node.height / 2;
-      } else {
-        // cluster
-        const entry = this.node(nodeId);
-        const node = entry.label;
-        node.element.setAttribute(
-          "transform",
-          `translate(${node.x},${node.y})`
-        );
-        node.rectangle.setAttribute("x", -node.width / 2);
-        node.rectangle.setAttribute("y", -node.height / 2);
-        node.rectangle.setAttribute("width", node.width);
-        node.rectangle.setAttribute("height", node.height);
+                // node_leafer.children[0].padding = [node.height / 2, node.width / 2]; // text
+                // node_leafer.children[0].width = node.width;
+                // node_leafer.children[0].height = node.height;
 
-        const node_leafer = leafer.findId(node.id);
-        node_leafer.width = node.width;
-        node_leafer.height = node.height;
-        node_leafer.children[0].width = node.width;
-        node_leafer.children[0].height = node.height;
-        node_leafer.x = node.x - node.width / 2;
-        node_leafer.y = node.y - node.height / 2;
-        node_leafer.select = true;
-      }
+                node_leafer.x = node.x - node.width / 2;
+                node_leafer.y = node.y - node.height / 2;
+
+                if (node_leafer.children.length) {
+                    node_leafer.children.forEach((child) => {
+                        if (child instanceof LeaferUI.Text){
+                            child.width = node.width;
+                            child.height = node.height;
+                            child.padding = [node.height / 2, node.width / 2]; 
+                            child.textAlign =  "center";
+                            child.verticalAlign = "middle";
+                        } else if (child instanceof LeaferUI.Box) {
+                            child.width = node.width;
+                            child.height = node.height / node_leafer.children.length;
+                            // child.padding = [node.height / 2, node.width / 2]; 
+                            if (node_leafer.children.length === 1){
+                                console.log(node.height / 2, node.width / 2);
+                                console.log(child.children[0].textAlign)
+                                console.log(child.children[0].verticalAlign)
+                                child.children[0].width = node.width;
+                                child.children[0].height = node.height / node_leafer.children.length;
+                                child.children[0].textAlign =  "center";
+                                child.children[0].verticalAlign = "middle";
+                                child.children[0].padding = [node.height / 2, node.width / 2]; // text
+                            }
+                        }
+                    });
+                }
+            } else {
+                // cluster
+                const entry = this.node(nodeId);
+                const node = entry.label;
+                node.element.setAttribute(
+                    "transform",
+                    `translate(${node.x},${node.y})`
+                );
+                node.rectangle.setAttribute("x", -node.width / 2);
+                node.rectangle.setAttribute("y", -node.height / 2);
+                node.rectangle.setAttribute("width", node.width);
+                node.rectangle.setAttribute("height", node.height);
+
+                // const node_leafer = leafer.findId(node.id);
+                // node_leafer.width = node.width;
+                // node_leafer.height = node.height;
+
+                // node_leafer.children[0].width = node.width;
+                // node_leafer.children[0].height = node.height;
+                // node_leafer.x = node.x - node.width / 2;
+                // node_leafer.y = node.y - node.height / 2;
+
+                const node_leafer = leafer.findId(node.id);
+                console.log(node.id)
+                node_leafer.width = node.width;
+                node_leafer.height = node.height;
+
+                // node_leafer.children[0].padding = [node.height / 2, node.width / 2]; // text
+                // node_leafer.children[0].width = node.width;
+                // node_leafer.children[0].height = node.height;
+
+                node_leafer.x = node.x - node.width / 2;
+                node_leafer.y = node.y - node.height / 2;
+
+                if (node_leafer.children.length) {
+                    node_leafer.children.forEach((child) => {
+                        if (child instanceof LeaferUI.Text){
+                            child.width = node.width;
+                            child.height = node.height;
+                            child.padding = [node.height / 2, node.width / 2]; 
+                            child.textAlign =  "center";
+                            child.verticalAlign = "middle";
+                        } else if (child instanceof LeaferUI.Box) {
+                            child.width = node.width;
+                            child.height = node.height / node_leafer.children.length;
+                            // child.padding = [node.height / 2, node.width / 2]; 
+                            if (node_leafer.children.length === 1){
+                                console.log(node.height / 2, node.width / 2);
+                                console.log(child.children[0].textAlign)
+                                console.log(child.children[0].verticalAlign)
+                                child.children[0].width = node.width;
+                                child.children[0].height = node.height / node_leafer.children.length;
+                                child.children[0].textAlign =  "center";
+                                child.children[0].verticalAlign = "middle";
+                                child.children[0].padding = [node.height / 2, node.width / 2]; // text
+                            }
+                        }
+                    });
+                }
+
+                node_leafer.select = true;
+            }
+        }
+        for (const edge of this.edges.values()) {
+            edge.label.update();
+            const link_leafer = leafer.findId(edge.label.id);
+            if (link_leafer) {
+                link_leafer.name = edge.label.label;
+            }
+        }
+        const links = leafer.findTag("Arrow");
+        links.forEach((element) => {
+            element._draw();
+        });
     }
-    for (const edge of this.edges.values()) {
-      edge.label.update();
-      const link_leafer = leafer.findId(edge.label.id);
-      if (link_leafer) {
-        link_leafer.name = edge.label.label;
-      }
-    }
-    const links = leafer.findTag("Arrow");
-    links.forEach((element) => {
-      element._draw();
-    });
-  }
 };
 
 grapher.Node = class {
