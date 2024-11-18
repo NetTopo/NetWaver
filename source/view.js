@@ -2018,7 +2018,7 @@ view.Graph = class extends grapher.Graph {
                         y: 0,
                         // width:200,
                         // height:200,
-                        fill: "rgba(255,255,255,1.0)",
+                        fill: "rgba(255,255,255,0.0)",
                         stroke:'rgba(0,0,0,1.0)',
                         strokeWidth:0,
                         cornerRadius: 0,
