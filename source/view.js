@@ -454,7 +454,8 @@ view.View = class {
 
     resetZoom() {
         // this._updateZoom(1);
-        this.leafer.zoom("fit", 1);
+        // this.leafer.zoom("fit-height", 1);
+        this.leafer.zoom(1);
     }
 
     _activate() {
@@ -510,6 +511,8 @@ view.View = class {
         container.scrollLeft = this._scrollLeft;
         container.scrollTop = this._scrollTop;
         this._zoom = zoom;
+        console.log(width, height,this._scrollLeft,this._scrollTop,zoom);
+        this.leafer.zoom(zoom);
     }
 
     _pointerDownHandler(e) {
@@ -1027,7 +1030,11 @@ view.View = class {
             this._graph = viewGraph;
         }
         setTimeout(() => {
-            this.leafer.zoom("fit", 1);
+            // this.leafer.zoom("fit", 1);
+            const boxBounds = leafer.boxBounds;
+            const clientBounds = leafer.clientBounds;
+            leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
+            
             this.leafer.children.forEach(element => {
                 element.visible = true;
             });
@@ -1911,7 +1918,6 @@ view.Graph = class extends grapher.Graph {
         // console.log(category);
         const color = (mediaQuery.matches? colorMapDark[category.toLowerCase()] : colorMap[category.toLowerCase()]) || [0, 0, 0,1.0] ;
 
-        console.log(obj.inputs);
         const  tensors = obj.context._tensors;
 
         const node_flow = new LeaferIN.flow.Flow({
@@ -2036,7 +2042,6 @@ view.Graph = class extends grapher.Graph {
         if (Array.isArray(inputs)) {
             for (const argument of inputs) {
                 const tensor = tensors.get(argument);
-                console.log(tensor);
                 const type = argument.type;
                 if (argument.visible !== false &&
                     ((type === 'graph') ||
@@ -2361,7 +2366,7 @@ view.Graph = class extends grapher.Graph {
         for (const node of graph.nodes) {
             const viewNode = this.createNode(node);
             this.setNode(viewNode);
-            console.log(viewNode);
+            // console.log(viewNode);
 
             let outputs = node.outputs;
             if (node.chain && node.chain.length > 0) {
@@ -2425,7 +2430,7 @@ view.Graph = class extends grapher.Graph {
                     const viewOutput = this.createOutput(argument);
                    
                     this.setNode(viewOutput);
-                    console.log(viewOutput);
+                    // console.log(viewOutput);
                     
                     for (const value of argument.value) {
                         this.createValue(value).to.push(viewOutput);
@@ -2502,7 +2507,7 @@ view.Node = class extends grapher.Node {
         this._add(value, type);
 
         const inputs = value.inputs;
-        console.log(inputs);
+        // console.log(inputs);
         if (type !== 'graph' && Array.isArray(inputs)) {
             for (const argument of inputs) {
                 if (!argument.type || argument.type.endsWith('*')) {
@@ -3039,6 +3044,7 @@ view.Sidebar = class {
     }
 
     _update(stack) {
+        const leafer = this._host._view.leafer;
         const sidebar = this._element('sidebar');
         const element = this._element('sidebar-content');
         const container = this._element('graph');
@@ -3075,6 +3081,15 @@ view.Sidebar = class {
             if (content && content.activate) {
                 content.activate();
             }
+            if(leafer) {
+                const boxBounds = leafer.boxBounds;
+                const clientBounds = leafer.clientBounds ;
+                const max = 0.4 * clientBounds.width > clientBounds.width - 42 * 12 ? 0.4 * clientBounds.width : clientBounds.width - 42 * 12; 
+               
+                leafer.zoomLayer.x = (max - boxBounds.width)/2;
+                // leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                // leafer.zoom(1);
+            }
         } else {
             sidebar.style.right = 'calc(0px - min(calc(100% * 0.6), 42em))';
             sidebar.style.opacity = 0;
@@ -3082,6 +3097,14 @@ view.Sidebar = class {
             element.parentNode.replaceChild(clone, element);
             container.style.width = '100%';
             container.focus();
+            if(leafer) {
+                const boxBounds = leafer.boxBounds;
+                const clientBounds = leafer.clientBounds;
+                leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
+                // leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                // leafer.zoom(1);
+            }
+           
         }
     }
 };

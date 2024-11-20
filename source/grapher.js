@@ -305,15 +305,20 @@ grapher.Graph = class {
                 node.update();
 
                 const node_leafer = leafer.findId(node.id);
-                node_leafer.width = node.width;
-                node_leafer.height = node.height;
+              
 
                 // node_leafer.children[0].padding = [node.height / 2, node.width / 2]; // text
                 // node_leafer.children[0].width = node.width;
                 // node_leafer.children[0].height = node.height;
 
+                // node_leafer.x = node.x - node.width / 2;
+                // node_leafer.y = node.y - node.height / 2;
+
                 node_leafer.x = node.x - node.width / 2;
                 node_leafer.y = node.y - node.height / 2;
+
+                node_leafer.width = node.width;
+                node_leafer.height = node.height;
 
                 if (node_leafer.children.length) {
                     node_leafer.children.forEach((child) => {
