@@ -423,6 +423,7 @@ view.View = class {
     _reload() {
         this.show('welcome spinner');
         if (this._model && this._stack.length > 0) {
+          
             this._updateGraph(this._model, this._stack).catch((error) => {
                 if (error) {
                     this.error(error, 'Graph update failed.', 'welcome');
@@ -777,6 +778,7 @@ view.View = class {
             const leafer = this.leafer;
             leafer.view.parentElement.style.zIndex = 1;
             leafer.clear();
+
             const format = [];
             if (model.format) {
                 format.push(model.format);
@@ -838,6 +840,10 @@ view.View = class {
     }
 
     async _updateGraph(model, stack) {
+        if(this.leafer) {
+            console.log('leafer clear');
+            this.leafer.clear();
+        }
         const update = async (model, stack) => {
             this._model = model;
             this._stack = stack;
