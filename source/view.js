@@ -2093,6 +2093,52 @@ view.Graph = class extends grapher.Graph {
                 }
             }
         }
+
+        if (Array.isArray(node.attributes)) {
+            const attributes = node.attributes.slice();
+            attributes.sort((a, b) => a.name.toUpperCase().localeCompare(b.name.toUpperCase()));
+            for (const argument of attributes) {
+                const type = argument.type;
+                if (argument.visible !== false &&
+                    ((type === 'graph') ||
+                    (type === 'object') ||
+                    type === 'object[]' || type === 'function' || type === 'function[]')) {
+                    // objects.push(argument);
+                } else if (options.attributes && argument.visible !== false) {
+                    // const item = attribute(argument);
+                    // list().add(item);
+
+                    let content = new view.Formatter(argument.value, argument.type).toString();
+                    console.log(argument);
+                    if (content && content.length > 12) {
+                        content = `${content.substring(0, 12)}\u2026`;
+                    }
+                    const node_argument = new LeaferUI.Box({
+                        x: 0,
+                        y: 0,
+                        fill: "rgba(255,255,255,0.0)",
+                        stroke:'rgba(0,0,0,1.0)',
+                        strokeWidth:0,
+                        cornerRadius: 0,
+                        draggable: false,
+                        children: [
+                            {
+                                tag: "Text",
+                                text: `${argument.name} = ${content}`,
+                                fill:mediaQuery.matches ? "white" : "black",
+                                padding: [0, 0, 0, 2],
+                                fontSize: 9,
+                                lineHeight: {
+                                    type: "percent",
+                                    value: 1.5, // 150%
+                                },
+                            },
+                        ],
+                    });
+                    node_flow.add(node_argument);
+                }
+            }
+        }
         return obj;
     }
 
