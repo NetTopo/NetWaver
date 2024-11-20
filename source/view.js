@@ -1035,6 +1035,12 @@ view.View = class {
             const clientBounds = leafer.clientBounds;
             leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
             
+            if(clientBounds.height > boxBounds.height) {
+                leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+            }else {
+                leafer.zoomLayer.y = 10;
+            }
+            
             this.leafer.children.forEach(element => {
                 element.visible = true;
             });
@@ -3101,7 +3107,9 @@ view.Sidebar = class {
                 const boxBounds = leafer.boxBounds;
                 const clientBounds = leafer.clientBounds;
                 leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
-                // leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                // if(clientBounds.height > boxBounds.height) {
+                //     leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                // }
                 // leafer.zoom(1);
             }
            
