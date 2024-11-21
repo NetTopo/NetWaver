@@ -65,7 +65,7 @@ view.View = class {
 
         leafer.on(LeaferUI.MoveEvent.DOWN, (e) => {
         // leafer.moveWorld(e.moveX, e.moveY);
-            console.log(e);
+            // console.log(e);
             if (e.target instanceof LeaferUI.Leafer) {
                 if ( view.currentSelectNode) {
                     view.currentSelectNode.selected = false;
@@ -3005,6 +3005,25 @@ view.Sidebar = class {
             if (event.propertyName === 'opacity' && sidebar.style.opacity === '0') {
                 const content = this._element('sidebar-content');
                 content.replaceChildren();
+                if(leafer) {
+                    const boxBounds = leafer.boxBounds;
+                    const clientBounds = leafer.clientBounds;
+                    leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
+                    // if(clientBounds.height > boxBounds.height) {
+                    //     leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                    // }
+                    // leafer.zoom(1);
+                }
+            }else if(event.propertyName === 'opacity' && sidebar.style.opacity === '1') {
+                if(leafer) {
+                    const boxBounds = leafer.boxBounds;
+                    const clientBounds = leafer.clientBounds ;
+                    const max = 0.4 * clientBounds.width > clientBounds.width - 42 * 12 ? 0.4 * clientBounds.width : clientBounds.width - 42 * 12; 
+                   
+                    leafer.zoomLayer.x = (max - boxBounds.width)/2;
+                    // leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+                    // leafer.zoom(1);
+                }
             }
         });
     }
@@ -3087,15 +3106,7 @@ view.Sidebar = class {
             if (content && content.activate) {
                 content.activate();
             }
-            if(leafer) {
-                const boxBounds = leafer.boxBounds;
-                const clientBounds = leafer.clientBounds ;
-                const max = 0.4 * clientBounds.width > clientBounds.width - 42 * 12 ? 0.4 * clientBounds.width : clientBounds.width - 42 * 12; 
-               
-                leafer.zoomLayer.x = (max - boxBounds.width)/2;
-                // leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
-                // leafer.zoom(1);
-            }
+            
         } else {
             sidebar.style.right = 'calc(0px - min(calc(100% * 0.6), 42em))';
             sidebar.style.opacity = 0;
@@ -3103,15 +3114,7 @@ view.Sidebar = class {
             element.parentNode.replaceChild(clone, element);
             container.style.width = '100%';
             container.focus();
-            if(leafer) {
-                const boxBounds = leafer.boxBounds;
-                const clientBounds = leafer.clientBounds;
-                leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
-                // if(clientBounds.height > boxBounds.height) {
-                //     leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
-                // }
-                // leafer.zoom(1);
-            }
+            
            
         }
     }
