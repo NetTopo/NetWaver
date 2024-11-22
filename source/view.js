@@ -2848,6 +2848,31 @@ view.Value = class {
                 }
                 this.context.setEdge(edge);
                 this._edges.push(edge);
+                const link_label = new LeaferUI.Box({
+                    x: 0,
+                    y: 0,
+                    // width: 100,
+                    // height: 100,
+                    fill: "rgba(0,0,0,0.0)",
+                    cornerRadius: 20,
+                    overflow: "hide",
+                    children: [
+                        {
+                            tag: 'Text',
+                            // width: 100,
+                            // height: 100,
+                            text: edge.label,
+                            fill: 'black',
+                            padding: [0, 0,0,10],
+                            fontSize: 8,
+                            // textAlign: "left",
+                            // verticalAlign: "middle",
+                        },
+                    ],
+                    draggable: true,
+                });
+                leafer.add(link_label);
+
                 const opt = {
                     opt1: {
                     //   margin: 25, // 比外层优先级更高
@@ -2862,7 +2887,24 @@ view.Value = class {
                     // padding: 10,
                     // margin: 10,
                     type: "default", // default , straight ,curve
+                    onDraw: (param) => {
+                        console.log(`param::`, param)
+                        const startP = param.s.linkPoint;
+                        const endP = param.e.linkPoint;
+                        const centerP = { x: (startP.x + endP.x) / 2, y: (startP.y + endP.y) / 2 };
+                        const bounds = link_label.boxBounds;
+                        
+                        // center
+                        // link_label.x = centerP.x - bounds.width / 2;
+                        // link_label.y = centerP.y - bounds.height / 2;
+
+                        link_label.x = centerP.x ;
+                        link_label.y = centerP.y ;
+
+                        return param.path;
+                    }
                   };
+
                 if (!leafer.findId(edge.id)) {
                     const link = new LeaferX.connector.LeaferXQnConnector(
                         from_node_leafer,

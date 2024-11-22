@@ -413,6 +413,7 @@ grapher.Graph = class {
             const link_leafer = leafer.findId(edge.label.id);
             if (link_leafer) {
                 link_leafer.name = edge.label.label;
+                console.log(link_leafer.name);
             }
         }
         const links = leafer.findTag("Arrow");
