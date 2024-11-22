@@ -473,12 +473,14 @@ view.View = class {
             const boxBounds = leafer.boxBounds;
             const clientBounds = leafer.clientBounds;
             leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
-            }else if( sidebar.style.opacity === '1') {
+            leafer.zoomLayer.y = 10;
+        }else if( sidebar.style.opacity === '1') {
             const boxBounds = leafer.boxBounds;
             const clientBounds = leafer.clientBounds ;
             const max = 0.4 * clientBounds.width > clientBounds.width - 42 * 12 ? 0.4 * clientBounds.width : clientBounds.width - 42 * 12; 
             leafer.zoomLayer.x = (max - boxBounds.width)/2;
-            }
+            leafer.zoomLayer.y = 10;
+        }
     }
 
     _activate() {
@@ -2906,13 +2908,15 @@ view.Value = class {
                     //   margin: 25, // 比外层优先级更高
                     //   arrow: "arrow",
                       // arrowType:'circle'
+                      side: 'b',
                     },
                     opt2: {
                     //   percent: 0.8,
                     //   margin: 5,
                       arrow: "angle",
                     },
-                    // padding: 10,
+                    // addPoint:[{x:0,y:0}],
+                    padding: 10,
                     // margin: 10,
                     type: "default", // default , straight ,curve
                     onDraw: (param) => {
