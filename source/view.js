@@ -2916,7 +2916,7 @@ view.Value = class {
                       arrow: "angle",
                     },
                     // addPoint:[{x:0,y:0}],
-                    padding: 10,
+                    padding: 6,
                     // margin: 10,
                     type: "default", // default , straight ,curve
                     onDraw: (param) => {
