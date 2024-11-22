@@ -2892,7 +2892,7 @@ view.Value = class {
                             // width: 100,
                             // height: 100,
                             text: edge.label,
-                            fill: 'black',
+                            fill: mediaQuery.matches? '#cdcdcd' : '#000000',
                             padding: [0, 0,0,10],
                             fontSize: 8,
                             // textAlign: "left",
@@ -2948,6 +2948,7 @@ view.Value = class {
                     link.strokeWidth = 1;
                     link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
+                    link.curve = true;
                     // link.hoverStyle = { fill:  'rgba(255,0,0,1.0)'},
                     leafer.add(link);
                 } else {
@@ -2960,6 +2961,7 @@ view.Value = class {
                     link.strokeWidth = 1;
                     link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
+                    link.curve = true;
                     // link.hoverStyle = { fill:  'rgba(255,0,0,1.0)'},
                     leafer.add(link);
                 }
