@@ -458,14 +458,26 @@ view.View = class {
         // this.leafer.zoom('fit');
         const leafer = this.leafer;
         leafer.zoom(1);
-        const boxBounds = leafer.boxBounds;
+        // const boxBounds = leafer.boxBounds;
+        //     const clientBounds = leafer.clientBounds;
+        //     leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
+            
+        //     if(clientBounds.height > boxBounds.height) {
+        //         leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+        //     }else {
+        //         leafer.zoomLayer.y = 10;
+        //     }
+
+        const sidebar = this._element('sidebar');
+        if(sidebar.style.opacity === '0') {
+            const boxBounds = leafer.boxBounds;
             const clientBounds = leafer.clientBounds;
             leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
-            
-            if(clientBounds.height > boxBounds.height) {
-                leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
-            }else {
-                leafer.zoomLayer.y = 10;
+            }else if( sidebar.style.opacity === '1') {
+            const boxBounds = leafer.boxBounds;
+            const clientBounds = leafer.clientBounds ;
+            const max = 0.4 * clientBounds.width > clientBounds.width - 42 * 12 ? 0.4 * clientBounds.width : clientBounds.width - 42 * 12; 
+            leafer.zoomLayer.x = (max - boxBounds.width)/2;
             }
     }
 
@@ -2904,7 +2916,7 @@ view.Value = class {
                     // margin: 10,
                     type: "default", // default , straight ,curve
                     onDraw: (param) => {
-                        console.log(`param::`, param)
+                        // console.log(`param::`, param)
                         const startP = param.s.linkPoint;
                         const endP = param.e.linkPoint;
                         const centerP = { x: (startP.x + endP.x) / 2, y: (startP.y + endP.y) / 2 };
