@@ -2938,7 +2938,7 @@ view.Value = class {
                   };
 
                 if (!leafer.findId(edge.id)) {
-                    const link = new LeaferX.connector.LeaferXQnConnector(
+                    const link = new LeaferX.connector.Link(
                         from_node_leafer,
                         to_node_leafer,
                         opt
@@ -2951,7 +2951,7 @@ view.Value = class {
                     // link.hoverStyle = { fill:  'rgba(255,0,0,1.0)'},
                     leafer.add(link);
                 } else {
-                    const link = new LeaferX.connector.LeaferXQnConnector(
+                    const link = new LeaferX.connector.Link(
                         from_node_leafer,
                         to_node_leafer,
                         opt
