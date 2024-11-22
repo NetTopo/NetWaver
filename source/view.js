@@ -455,7 +455,18 @@ view.View = class {
     resetZoom() {
         // this._updateZoom(1);
         // this.leafer.zoom("fit-height", 1);
-        this.leafer.zoom(1);
+        // this.leafer.zoom('fit');
+        const leafer = this.leafer;
+        leafer.zoom(1);
+        const boxBounds = leafer.boxBounds;
+            const clientBounds = leafer.clientBounds;
+            leafer.zoomLayer.x = (clientBounds.width - boxBounds.width)/2;
+            
+            if(clientBounds.height > boxBounds.height) {
+                leafer.zoomLayer.y = (clientBounds.height - boxBounds.height)/2;
+            }else {
+                leafer.zoomLayer.y = 10;
+            }
     }
 
     _activate() {
@@ -1044,7 +1055,7 @@ view.View = class {
             this.leafer.children.forEach(element => {
                 element.visible = true;
             });
-        }, 30);
+        }, );
         return status;
     }
 
@@ -2020,6 +2031,7 @@ view.Graph = class extends grapher.Graph {
             strokeWidth:1,
             cornerRadius: 0,
             draggable: true,
+            visible:true,
             hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
             selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
             // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
@@ -2070,6 +2082,7 @@ view.Graph = class extends grapher.Graph {
                         strokeWidth:0,
                         cornerRadius: 0,
                         draggable: true,
+                        visible: true,
                         hoverStyle: { 
                             fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`,
                             // stroke:"#ff0000",
@@ -2083,6 +2096,7 @@ view.Graph = class extends grapher.Graph {
                                 text: tensor? `${argument.name}${tensor.content}` : argument.name,
                                 fill:mediaQuery.matches ? "white" : "black",
                                 padding: [0, 0,0,2],
+                                fontWeight: "bold",
                                 // textAlign: "center",
                                 // verticalAlign: "middle",
                                 fontSize: 10,
@@ -2132,6 +2146,7 @@ view.Graph = class extends grapher.Graph {
                         strokeWidth:0,
                         cornerRadius: 0,
                         draggable: false,
+                        visible:true,
                         children: [
                             {
                                 tag: "Text",
@@ -2856,6 +2871,7 @@ view.Value = class {
                     fill: "rgba(0,0,0,0.0)",
                     cornerRadius: 20,
                     overflow: "hide",
+                    visible:false,
                     children: [
                         {
                             tag: 'Text',
@@ -2893,7 +2909,7 @@ view.Value = class {
                         const endP = param.e.linkPoint;
                         const centerP = { x: (startP.x + endP.x) / 2, y: (startP.y + endP.y) / 2 };
                         const bounds = link_label.boxBounds;
-                        
+
                         // center
                         // link_label.x = centerP.x - bounds.width / 2;
                         // link_label.y = centerP.y - bounds.height / 2;
