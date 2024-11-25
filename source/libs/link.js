@@ -543,40 +543,45 @@ this.LeaferX.connector = (function (exports, core, arrow) {
             this.type = (opt === null || opt === void 0 ? void 0 : opt.type) || 'default';
             this.name = opt === null || opt === void 0 ? void 0 : opt.name;
             this.strokeWidth = 3;
-            this.stroke = 'rgb(50,89,34)';
+            this.stroke = 'rgb(255,0,0)';
             this.direction = this.setDirection(target1, target2);
             const that = this;
-            if (this.name) {
-                console.log(this.name);
-            }
             target1.on(core.MoveEvent.DRAG, function (e) {
                 if (e.type === core.MoveEvent.DRAG) {
-                    that._draw();
+                    that._generatePath();
                 }
             });
             target2.on(core.MoveEvent.DRAG, function (e) {
                 if (e.type === core.MoveEvent.DRAG) {
-                    that._draw();
+                    that._generatePath();
                 }
             });
-            this._draw();
+            this._generatePath();
             return new Proxy(this, {
                 set: (target, property, newValue, receiver) => QnConnectorProxy(target, property, newValue, receiver)
             });
         }
-        drawPath(s, e) {
+        calculatePath(s, e) {
             var _a, _b, _c, _d;
+            let points = [];
             let s1 = `M ${s.linkPoint.x} ${s.linkPoint.y}`;
+            points.push(s.linkPoint.x, s.linkPoint.y);
             let s2 = ` L ${s.padding.x} ${s.padding.y}`;
+            points.push(s.padding.x, s.padding.y);
             if (((_a = s.pathPoint) === null || _a === void 0 ? void 0 : _a.x) && ((_b = s.pathPoint) === null || _b === void 0 ? void 0 : _b.y)) {
                 s2 += ` L ${s.pathPoint.x} ${s.pathPoint.y}`;
+                points.push(s.pathPoint.x, s.pathPoint.y);
             }
             let e2 = '';
             if (((_c = e.pathPoint) === null || _c === void 0 ? void 0 : _c.x) && ((_d = e.pathPoint) === null || _d === void 0 ? void 0 : _d.y)) {
                 e2 = ` L ${e.pathPoint.x} ${e.pathPoint.y}`;
+                points.push(e.pathPoint.x, e.pathPoint.y);
             }
             e2 += ` L ${e.padding.x} ${e.padding.y}`;
+            points.push(e.padding.x, e.padding.y);
             let e1 = ` L ${e.linkPoint.x} ${e.linkPoint.y}`;
+            points.push(e.linkPoint.x, e.linkPoint.y);
+            this.points = points;
             return `${s1}${s2}${e2}${e1}`;
         }
         checkInSide(p, bound) {
@@ -606,9 +611,8 @@ this.LeaferX.connector = (function (exports, core, arrow) {
                 obj2,
             };
         }
-        _draw() {
+        _generatePath() {
             var _a;
-            this.renderCount = 0;
             this.setValidSide();
             var pdPoints1 = this.obj1.updateValidPoints(this.obj2);
             var pdPoints2 = this.obj2.updateValidPoints(this.obj1);
@@ -704,12 +708,13 @@ this.LeaferX.connector = (function (exports, core, arrow) {
                     }
                 }
             }
-            this.path = this.drawPath(point1, point2);
+            this.path = this.calculatePath(point1, point2);
             if (typeof ((_a = this.opt) === null || _a === void 0 ? void 0 : _a.onDraw) == 'function') {
                 this.path = this.opt.onDraw({
                     s: point1,
                     e: point2,
-                    path: this.path
+                    path: this.path,
+                    source: this,
                 });
             }
             this.startArrow = this.obj1.arrowType;

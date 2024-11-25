@@ -2000,7 +2000,7 @@ view.Graph = class extends grapher.Graph {
             //         fontSize: 10,
             //     },
             // ],
-            draggable: true,
+                   draggable: false,
             event: {
                 //   [LeaferUI.PointerEvent.ENTER]: (e) => {
                 //     // console.log(e);
@@ -2044,10 +2044,10 @@ view.Graph = class extends grapher.Graph {
             stroke:'rgba(0,0,0,1.0)',
             strokeWidth:1,
             cornerRadius: 0,
-            draggable: true,
             visible:true,
             hoverStyle: { fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`},
             selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+            draggable: false,
             // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
             children: [
                 {
@@ -2095,7 +2095,7 @@ view.Graph = class extends grapher.Graph {
                         stroke:'rgba(0,0,0,1.0)',
                         strokeWidth:0,
                         cornerRadius: 0,
-                        draggable: true,
+                               draggable: false,
                         visible: true,
                         hoverStyle: { 
                             fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`,
@@ -2230,7 +2230,7 @@ view.Graph = class extends grapher.Graph {
                     fontSize: 10,
                 },
             ],
-            draggable: true,
+                   draggable: false,
             event: {
                 //   [LeaferUI.PointerEvent.ENTER]: (e) => {
                 //     // console.log(e);
@@ -2295,7 +2295,7 @@ view.Graph = class extends grapher.Graph {
                     fontSize: 10,
                 },
             ],
-            draggable: true,
+                   draggable: false,
             // hoverStyle: { fill: 'rgba(255,255,255,0.8)' },
             // selectedStyle: {fill: "rgba(255,255,255, 1.0)"},
             // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
@@ -2877,6 +2877,7 @@ view.Value = class {
                 }
                 this.context.setEdge(edge);
                 this._edges.push(edge);
+
                 const link_label = new LeaferUI.Box({
                     x: 0,
                     y: 0,
@@ -2899,7 +2900,7 @@ view.Value = class {
                             // verticalAlign: "middle",
                         },
                     ],
-                    draggable: true,
+                    draggable: false,
                 });
                 leafer.add(link_label);
 
@@ -2919,20 +2920,30 @@ view.Value = class {
                     padding: 6,
                     // margin: 10,
                     type: "default", // default , straight ,curve
+                    etc: {
+                        edge,
+                        leafer
+                    },
                     onDraw: (param) => {
                         // console.log(`param::`, param)
                         const startP = param.s.linkPoint;
                         const endP = param.e.linkPoint;
                         const centerP = { x: (startP.x + endP.x) / 2, y: (startP.y + endP.y) / 2 };
-                        const bounds = link_label.boxBounds;
 
-                        // center
-                        // link_label.x = centerP.x - bounds.width / 2;
-                        // link_label.y = centerP.y - bounds.height / 2;
-
-                        link_label.x = centerP.x ;
-                        link_label.y = centerP.y ;
-
+                        const source = param.source;
+                        const label = source && source.getAttr('label');
+                        if (label) {
+                            const bounds = label.boxBounds;
+                            label.x = centerP.x - bounds.width / 2;
+                            label.y = centerP.y - bounds.height / 2;
+                            // label.x = centerP.x ;
+                            // label.y = centerP.y ;
+                        }
+                        const edge  = source && source.getAttr('edge');
+                        if(edge && edge.edgePath) {
+                             console.log(edge.edgePath);
+                            return edge.edgePath;
+                        }
                         return param.path;
                     }
                   };
@@ -2949,6 +2960,8 @@ view.Value = class {
                     link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
                     link.curve = true;
+                    link.setAttr('label',link_label);
+                    link.setAttr('edge',edge);
                     // link.hoverStyle = { fill:  'rgba(255,0,0,1.0)'},
                     leafer.add(link);
                 } else {
@@ -2962,6 +2975,8 @@ view.Value = class {
                     link.stroke = mediaQuery.matches? '#cdcdcd' : '#000000';
                     link.visible = false;
                     link.curve = true;
+                    link.setAttr('edge',edge);
+                    link.setAttr('label',link_label);
                     // link.hoverStyle = { fill:  'rgba(255,0,0,1.0)'},
                     leafer.add(link);
                 }

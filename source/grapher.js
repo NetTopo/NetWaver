@@ -410,19 +410,19 @@ grapher.Graph = class {
         }
         for (const edge of this.edges.values()) {
             edge.label.update();
-            console.log(edge.label.edgePath);
+            // console.log(edge.label.edgePath);
             const link_leafer = leafer.findId(edge.label.id);
             if (link_leafer) {
                 link_leafer.name = edge.label.label;
-                link_leafer._draw();
                 link_leafer.path = edge.label.edgePath;
+                // link_leafer._generatePath();
             }
         }
 
-        // const links = leafer.findTag("Arrow");
-        // links.forEach((element) => {
-        //     element._draw();
-        // });
+        const links = leafer.findTag("Arrow");
+        links.forEach((element) => {
+            element._generatePath();
+        });
     }
 };
 
