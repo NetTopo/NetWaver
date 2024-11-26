@@ -2934,10 +2934,10 @@ view.Value = class {
                         const label = source && source.getAttr('label');
                         if (label) {
                             const bounds = label.boxBounds;
-                            label.x = centerP.x - bounds.width / 2;
-                            label.y = centerP.y - bounds.height / 2;
-                            // label.x = centerP.x ;
-                            // label.y = centerP.y ;
+                            // label.x = centerP.x - bounds.width / 2;
+                            // label.y = centerP.y - bounds.height / 2;
+                            label.x = centerP.x ;
+                            label.y = centerP.y ;
                         }
                         const edge  = source && source.getAttr('edge');
                         if(edge && edge.edgePath) {
