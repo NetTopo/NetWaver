@@ -2026,8 +2026,10 @@ view.Graph = class extends grapher.Graph {
                     // };
                     this.view.currentSelectNode = e.current;
                     this.view.showModelProperties();
-                    const obj = e.current.getAttr("view.data");
-                    this.view.showNodeProperties(obj);
+                    const viewNode = e.current.getAttr("view.data");
+                    if(viewNode) {
+                        this.view.showNodeProperties(viewNode.value);
+                    }
                 },
             },
         });
@@ -2256,8 +2258,10 @@ view.Graph = class extends grapher.Graph {
                     };
                     this.view.currentSelectNode = e.current;
                     this.view.showModelProperties();
-                    const viewNode = e.current.getAttr("view.data");
-                    this.view.showNodeProperties(viewNode);
+                    // const viewNode = e.current.getAttr("view.data");
+                    // if(viewNode){
+                    //     this.view.showNodeProperties(viewNode.value);
+                    // }
                 },
             },
         });
@@ -2325,8 +2329,10 @@ view.Graph = class extends grapher.Graph {
                     };
 
                     this.view.showModelProperties();
-                    const viewNode = e.current.getAttr("view.data");
-                    this.view.showNodeProperties(viewNode);
+                    // const viewNode = e.current.getAttr("view.data");
+                    // if(viewNode) {
+                    //     this.view.showNodeProperties(viewNode.value);
+                    // }
                 },
             },
         });
