@@ -2000,7 +2000,7 @@ view.Graph = class extends grapher.Graph {
             //         fontSize: 10,
             //     },
             // ],
-                   draggable: false,
+                   draggable: true,
             event: {
                 //   [LeaferUI.PointerEvent.ENTER]: (e) => {
                 //     // console.log(e);
@@ -2068,7 +2068,7 @@ view.Graph = class extends grapher.Graph {
                 },
             ],
         });
-
+        node_text.setAttr('type',"titleNode");
         node_flow.add(node_text);
 
         const isObject = (node) => {
@@ -2094,8 +2094,53 @@ view.Graph = class extends grapher.Graph {
                     ((type === 'graph') ||
                     (type === 'object' && isObject(argument.value)) ||
                     (type === 'object[]' || type === 'function' || type === 'function[]'))) {
-                    // objects.push(argument);
+                    // group node
                     console.log(argument);
+                    const node_argument = new LeaferUI.Box({
+                        x: 0,
+                        y: 0,
+                        // width:200,
+                        // height:200,
+                        fill: "rgba(255,255,255,0.0)",
+                        stroke:'rgba(0,0,0,1.0)',
+                        strokeWidth:1,
+                        cornerRadius: 0,
+                        draggable: false,
+                        visible: true,
+                        // hoverStyle: { 
+                        //     fill:  `rgba(${color[0]},${color[1]},${color[2]},0.6)`,
+                        // },
+                        // selectedStyle: {fill:  `rgba(${color[0]},${color[1]},${color[2]},0.8)` },
+                        // pressStyle: { fill: 'rgba(102,153,204,1.0)' },
+                        children: [
+                            {
+                                tag: "Text",
+                                text: tensor? `${argument.name}${tensor.content}:` : argument.name + ":",
+                                fill:mediaQuery.matches ? "white" : "black",
+                                padding: [0, 0,0,2],
+                                // fontWeight: "bold",
+                                // textAlign: "center",
+                                // verticalAlign: "middle",
+                                fontSize: 10,
+                                lineHeight: {
+                                    type: "percent",
+                                    value: 1.5, // 150%
+                                },
+                            },
+                        ],
+                    });
+                    node_argument.setAttr('type',"argumentNode");
+                    node_flow.add(node_argument);
+
+        //             const ellipse = new LeaferUI.Ellipse({
+        //                 x: 0,
+        //         y: 0,
+        //   width: 20,
+        //   height: 20,
+        //   fill: "#FEB027",
+        //   draggable: false,
+        // });
+        // node_flow.add(ellipse);
                 } else if (options.weights && argument.visible !== false && argument.type !== 'attribute' && Array.isArray(argument.value) && argument.value.length === 1 && argument.value[0].initializer) {
                     // const item = this.context.createArgument(argument);
                     // list().add(item);
@@ -2136,6 +2181,7 @@ view.Graph = class extends grapher.Graph {
                             },
                         ],
                     });
+                    node_argument.setAttr('type',"argumentNode");
                     node_flow.add(node_argument);
                 } else if (options.weights && (argument.visible === false || Array.isArray(argument.value) && argument.value.length > 1) && (!argument.type || argument.type.endsWith('*')) && argument.value.some((value) => value !== null && value.initializer)) {
                     // hiddenTensors = true;
@@ -2960,7 +3006,7 @@ view.Value = class {
                         }
                         const edge  = source && source.getAttr('edge');
                         if(edge && edge.edgePath) {
-                             console.log(edge.edgePath);
+                            //  console.log(edge.edgePath);
                             return edge.edgePath;
                         }
                         return param.path;

@@ -298,6 +298,8 @@ grapher.Graph = class {
 
     update() {
         for (const nodeId of this.nodes.keys()) {
+            console.log(this.children(nodeId).length);
+            console.log(this.children(nodeId));
             if (this.children(nodeId).length === 0) {
                 // node
                 const entry = this.node(nodeId);
@@ -305,7 +307,6 @@ grapher.Graph = class {
                 node.update();
 
                 const node_leafer = leafer.findId(node.id);
-              
 
                 // node_leafer.children[0].padding = [node.height / 2, node.width / 2]; // text
                 // node_leafer.children[0].width = node.width;
@@ -325,23 +326,68 @@ grapher.Graph = class {
                         if (child instanceof LeaferUI.Text){
                             child.width = node.width;
                             child.height = node.height;
-                            child.padding = [node.height / 2, node.width / 2]; 
+                            // child.padding = [node.height / 2, node.width / 2]; 
                             child.textAlign =  "center";
                             child.verticalAlign = "middle";
                         } else if (child instanceof LeaferUI.Box) {
-                            child.width = node.width;
-                            child.height = node.height / node_leafer.children.length;
-                            // child.padding = [node.height / 2, node.width / 2]; 
-                            if (node_leafer.children.length === 1){
-                                // console.log(node.height / 2, node.width / 2);
-                                // console.log(child.children[0].textAlign)
-                                // console.log(child.children[0].verticalAlign)
-                                child.children[0].width = node.width;
-                                child.children[0].height = node.height / node_leafer.children.length;
-                                child.children[0].textAlign =  "center";
-                                child.children[0].verticalAlign = "middle";
-                                child.children[0].padding = [node.height / 2, node.width / 2]; // text
+                            const type =  child.getAttr('type');
+
+                            if(node_leafer.children.length > 1){
+                                // titleNode + argumentNode
+                                if(type === 'titleNode'){
+                                    child.width = node.width;
+                                    child.height = 20;
+                                    child.padding = [0, 0]; 
+                                
+                                    child.children[0].width = node.width;
+                                    child.children[0].height = 20;
+                                    child.children[0].textAlign =  "left";
+                                    child.children[0].verticalAlign = "middle";
+                                }else {
+                                    child.width = node.width;
+                                    child.height = (node.height - 20)/(node_leafer.children.length - 1);
+                                    child.padding = [0, 0]; 
+                                
+                                    child.children[0].width = node.width;
+                                    child.children[0].height = (node.height - 20)/(node_leafer.children.length - 1);
+                                    child.children[0].textAlign =  "left";
+                                    child.children[0].verticalAlign = "middle";
+                                }
+                            }else{
+                                // titleNode
+                                if(type === 'titleNode'){
+                                    child.width = node.width;
+                                    child.height = node.height;
+                                    // child.padding = [node.height / 2, node.width / 2]; 
+                                
+                                    child.children[0].width = node.width;
+                                    child.children[0].height = node.height;
+                                    child.children[0].textAlign =  "center";
+                                    child.children[0].verticalAlign = "middle";
+                                }
                             }
+                            // if(type==='titleNode') {
+                           
+                            // }else {
+                            
+                            // }
+                            
+                            // if (node_leafer.children.length === 1){
+                            //     child.width = node.width;
+                            //     child.height = node.height;
+                            //     child.padding = [node.height / 2, node.width / 2]; 
+                            //     child.children[0].width = node.width;
+                            //     child.children[0].height = node.height;
+                            //     child.children[0].textAlign =  "center";
+                            //     child.children[0].verticalAlign = "middle";
+                            // }else {
+                            //     child.width = node.width;
+                            //     child.height = (node.height - 20) / (node_leafer.children.length -1 );
+                            //     child.children[0].width = node.width;
+                            //     child.children[0].height = 20;
+                            //     child.children[0].textAlign =  "left";
+                            //     child.children[0].verticalAlign = "middle";
+                            // }
                         }
                     });
                 }
