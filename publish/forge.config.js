@@ -50,6 +50,13 @@ export default {
                 name: "Netron-${version}"
                 /* eslint-enable no-template-curly-in-string */
             }
+        },
+        {
+            name: '@electron-forge/maker-snap',
+            platforms: ['linux'],
+            config: {
+                grade: 'stable'
+            }
         }
     ],
     publishers: [
@@ -59,7 +66,9 @@ export default {
         },
         {
             "name": "@electron-forge/publisher-snapcraft",
-            "config": {}
+            "config": {
+                release: "latest/stable"
+            }
         }
     ]
 };
