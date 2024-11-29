@@ -331,10 +331,8 @@ grapher.Graph = class {
                             child.verticalAlign = "middle";
                         } else if (child instanceof LeaferUI.Box) {
                             const type =  child.getAttr('type');
-
-                            if(node_leafer.children.length > 1){
-                                // titleNode + argumentNode
-                                if(type === 'titleNode'){
+                            if(type === 'titleNode'){
+                                if(node_leafer.children.length > 1){
                                     child.width = node.width;
                                     child.height = 20;
                                     child.padding = [0, 0]; 
@@ -345,18 +343,6 @@ grapher.Graph = class {
                                     child.children[0].verticalAlign = "middle";
                                 }else {
                                     child.width = node.width;
-                                    child.height = (node.height - 20)/(node_leafer.children.length - 1);
-                                    child.padding = [0, 0]; 
-                                
-                                    child.children[0].width = node.width;
-                                    child.children[0].height = (node.height - 20)/(node_leafer.children.length - 1);
-                                    child.children[0].textAlign =  "left";
-                                    child.children[0].verticalAlign = "middle";
-                                }
-                            }else{
-                                // titleNode
-                                if(type === 'titleNode'){
-                                    child.width = node.width;
                                     child.height = node.height;
                                     // child.padding = [node.height / 2, node.width / 2]; 
                                 
@@ -365,7 +351,22 @@ grapher.Graph = class {
                                     child.children[0].textAlign =  "center";
                                     child.children[0].verticalAlign = "middle";
                                 }
+                            }else if(type === 'argumentNode'){
+                                if(node_leafer.children.length > 1){
+                                    child.width = node.width;
+                                    child.height = (node.height - 20)/(node_leafer.children.length - 1);
+                                    child.padding = [0, 0]; 
+                                
+                                    child.children[0].width = node.width;
+                                    child.children[0].height = (node.height - 20)/(node_leafer.children.length - 1);
+                                    child.children[0].textAlign =  "left";
+                                    child.children[0].verticalAlign = "middle";
+                                }else {
+
+                                }
                             }
+
+                          
                             // if(type==='titleNode') {
                            
                             // }else {
