@@ -2071,6 +2071,19 @@ view.Graph = class extends grapher.Graph {
 
         node_flow.add(node_text);
 
+        const isObject = (node) => {
+            if (node.name || node.identifier || node.description ||
+                (Array.isArray(node.inputs) && node.inputs.length > 0) ||
+                (Array.isArray(node.outputs) && node.outputs.length > 0) ||
+                (Array.isArray(node.attributes) && node.attributes.length > 0) ||
+                (Array.isArray(node.chain) && node.chain.length > 0) ||
+                (node.type && Array.isArray(node.type.nodes) && node.type.nodes.length > 0)) {
+                return true;
+            }
+
+            return false;
+        };
+
         const inputs = node.inputs;
         const options = this.options;
         if (Array.isArray(inputs)) {
