@@ -34,3 +34,7 @@ Sample model files to download or open using the browser version:
  * **TorchScript**: [traced_online_pred_layer](https://github.com/ApolloAuto/apollo/raw/master/modules/prediction/data/traced_online_pred_layer.pt) [[open](https://nettopo.github.io/NetWaver/source/index.html?url=https://github.com/ApolloAuto/apollo/raw/master/modules/prediction/data/traced_online_pred_layer.pt)]
  * **Core ML**: [exermote](https://github.com/Lausbert/Exermote/raw/master/ExermoteInference/ExermoteCoreML/ExermoteCoreML/Model/Exermote.mlmodel) [[open](https://nettopo.github.io/NetWaver/source/index.html?url=https://github.com/Lausbert/Exermote/raw/master/ExermoteInference/ExermoteCoreML/ExermoteCoreML/Model/Exermote.mlmodel)]
  * **Darknet**: [yolo](https://github.com/AlexeyAB/darknet/raw/master/cfg/yolo.cfg) [[open](https://nettopo.github.io/NetWaver/source/index.html?url=https://github.com/AlexeyAB/darknet/raw/master/cfg/yolo.cfg)]
+
+
+# todo
+- [ ] https://huggingface.co/efern39/SimpleRNN/tree/main
